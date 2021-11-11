@@ -12,7 +12,7 @@ def trip_statistics(trip: pd.DataFrame) -> pd.Series:
 
     assert isinstance(trip, pd.DataFrame)
 
-    trip["time"] = pd.to_datetime(trip["time"])
+    trip["time"] = trip.index
 
     assert (
         pd.TimedeltaIndex(trip["time"].diff().dropna()).total_seconds() > 0

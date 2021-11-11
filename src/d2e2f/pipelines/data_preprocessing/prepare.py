@@ -8,7 +8,7 @@ def prepare(df_raw: pd.DataFrame, do_calculate_rudder_angles=False, renames={}):
     rename = {value: key for key, value in renames.items()}
     df = df_raw.rename(columns=rename)
     df.set_index("time", inplace=True)
-    df.index = pd.to_datetime(df_raw.index)
+    df.index = pd.to_datetime(df.index)
     df.sort_index(inplace=True)
     df.index.name = "time"
 
@@ -91,3 +91,35 @@ def rename_columns(df: pd.DataFrame, rename={}) -> pd.DataFrame:
     # df_.rename(columns=renames_power, inplace=True)
 
     return df_
+
+
+def redefine_heading(df: pd.DataFrame) -> pd.Series:
+    """The double ended ferry is run in reverse direction half of the time.
+    This means that the "heading" measures by the compas is 180 degrees wrong, compared to course over ground from GPS.
+    This method makes this 180 degrees heading shift whenever needed.
+
+    Parameters
+    ----------
+    trip : pd.DataFrame
+        [description]
+
+    Returns
+    -------
+    pd.Series
+        corrected heading
+    """
+
+    trips = df.groupby(by="trip_no")
+
+    for trip_no, trip in trips:
+
+        heading = trip["heading"]
+        cog = trip["cog"]
+
+        if (cog - heading).abs().mean() > 90:
+            df.loc[trip.index, "heading"] = np.mod(heading + 180, 360)
+            df.loc[trip.index, "reversing"] = True
+        else:
+            df.loc[trip.index, "reversing"] = False
+
+    return df

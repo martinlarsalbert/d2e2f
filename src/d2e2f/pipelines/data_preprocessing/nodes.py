@@ -46,10 +46,6 @@ def preprocess(
         renames=renames,
     )
 
-    # To be able to save to parquet file:
-    df_["time"] = df_.index.astype(str)
-    df_.reset_index(inplace=True, drop=True)
-
     return df_
 
 
@@ -71,10 +67,6 @@ def preprocess_trip_numbering(
         trip_separator=trip_separator,
         initial_speed_separator=initial_speed_separator,
     )
-
-    # To be able to save to parquet file:
-    df_["time"] = df_.index.astype(str)
-    df_.reset_index(inplace=True, drop=True)
 
     return df_
 

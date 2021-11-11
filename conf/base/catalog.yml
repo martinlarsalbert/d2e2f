@@ -10,15 +10,23 @@ raw_data:
 preprocessed_data:
   type: pandas.ParquetDataSet
   filepath: data/02_intermediate/preprocessed_data.parquet
+  save_args:
+    use_deprecated_int96_timestamps: True
   
 data_with_trip_numbers:
   type: pandas.ParquetDataSet
   filepath: data/02_intermediate/data_with_trip_numbers.parquet
+  save_args:
+    use_deprecated_int96_timestamps: True
 
 data_with_trip_columns:
   type: pandas.ParquetDataSet
   filepath: data/02_intermediate/data_with_trip_columns.parquet
+  save_args:
+    use_deprecated_int96_timestamps: True
 
 trip_statistics:
   type: pandas.ParquetDataSet
   filepath: data/02_intermediate/trip_statistics.parquet
+  save_args:
+    use_deprecated_int96_timestamps: True
