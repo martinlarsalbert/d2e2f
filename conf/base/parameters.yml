@@ -1,8 +1,8 @@
-start_number: 0
-trip_separator: 0 days 00:00:20
-initial_speed_separator: 0.05
-do_calculate_rudder_angles: False
+## Slice
+row_start: 0
+row_end: 10000 # (-1 for all)
 
+## preprocess
 renames:
   time: Tidpunkt [UTC]
   latitude: Latitud (deg)
@@ -10,9 +10,9 @@ renames:
   sog: Fart över grund (kts)
   heading: Stävad kurs (deg)
   P1: Effekt EM Thruster 1 (kW)
-  P1: Effekt EM Thruster 2 (kW)
-  P1: Effekt EM Thruster 3 (kW)
-  P1: Effekt EM Thruster 4 (kW)
+  P2: Effekt EM Thruster 2 (kW)
+  P3: Effekt EM Thruster 3 (kW)
+  P4: Effekt EM Thruster 4 (kW)
   P: Effekt EM Thruster Total (kW)
   cog: Kurs över grund (deg)
   sin_pm1: Sin EM1 ()
@@ -38,3 +38,12 @@ renames:
   awa: Relativ vindriktning (deg)
   w: Vindhastighet (m/s)
   wa: Vindriktning (deg)
+
+## preprocess_trip_numbering:
+initial_speed_separator: 0.05
+do_calculate_rudder_angles: False
+
+
+## preprocess_trip_numbering
+start_number: 0
+trip_separator: 0 days 00:00:20

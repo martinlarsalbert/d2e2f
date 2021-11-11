@@ -13,7 +13,7 @@ def prepare(df_raw: pd.DataFrame, do_calculate_rudder_angles=False, renames={}):
     df.index.name = "time"
 
     df["sog"] *= 1.852 / 3.6
-    df = rename_columns(df)
+    df = rename_columns(df, rename=rename)
 
     if do_calculate_rudder_angles:
         df = calculate_rudder_angles(df=df, drop=False)
@@ -58,7 +58,7 @@ def calculate_rudder_angles(df: pd.DataFrame, inplace=True, drop=False) -> pd.Da
     return df_
 
 
-def rename_columns(df: pd.DataFrame) -> pd.DataFrame:
+def rename_columns(df: pd.DataFrame, rename={}) -> pd.DataFrame:
     """Rename columns of the data frame
 
     Parameters
@@ -72,14 +72,18 @@ def rename_columns(df: pd.DataFrame) -> pd.DataFrame:
         data frame with columns with standard names
     """
 
-    renames = {
+    renames1 = {
         key: key.replace(" (kW)", "")
         .replace(" (deg)", "")
         .replace(" ()", "")
         .replace(" ", "_")
-        .lower()
         for key in df.keys()
     }
+
+    renames = {
+        key.lower(): value for key, value in renames1.items() if not key in rename
+    }
+
     df_ = df.rename(columns=renames)
 
     # renames_power = {f"power_em_thruster_{i}": f"P{i}" for i in range(1, 5)}

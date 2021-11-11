@@ -86,3 +86,64 @@ def get_starts(
     df_starts = df_starts.loc[mask]
 
     return df_starts.copy()
+
+
+def add_trip_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """Add trip columns
+
+    Adding columns:
+    * "trip_time"
+    * "trip_direction"
+    * "reversing"
+
+    Correcting columns:
+    "heading"
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        data with "trip_no"
+
+    Returns
+    -------
+    pd.DataFrame
+        data with trip columns added/corrected
+    """
+
+    trips = df.groupby(by="trip_no")
+
+    trip_time = trips["trip_no"].transform(lambda x: x.index - x.index[0])
+    df["trip_time"] = pd.TimedeltaIndex(trip_time).total_seconds()
+
+    # 0 : Helsingör -> Helsingborg
+    # 1 : Helsingör <- Helsingborg
+    df["trip_direction"] = trips["longitude"].transform(
+        lambda x: 0 if (x[0] < 12.65) else 1
+    )
+
+    for trip_no, trip in trips:
+        redefine_heading(df=df, trip=trip)
+
+    return df
+
+
+def redefine_heading(df: pd.DataFrame, trip):
+    """The double ended ferry is run in reverse direction half of the time.
+    This means that the "heading" measures by the compas is 180 degrees wrong, compared to course over ground from GPS.
+    This method makes this 180 degrees heading shift whenever needed.
+
+    Parameters
+    ----------
+    trip : pd.DataFrame
+        [description]
+
+    """
+
+    heading = trip["heading"]
+    cog = trip["cog"]
+
+    if (cog - heading).abs().mean() > 90:
+        df.loc[trip.index, "heading"] = np.mod(heading + 180, 360)
+        df.loc[trip.index, "reversing"] = True
+    else:
+        df.loc[trip.index, "reversing"] = False

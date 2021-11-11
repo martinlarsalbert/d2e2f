@@ -14,3 +14,11 @@ preprocessed_data:
 data_with_trip_numbers:
   type: pandas.ParquetDataSet
   filepath: data/02_intermediate/data_with_trip_numbers.parquet
+
+data_with_trip_columns:
+  type: pandas.ParquetDataSet
+  filepath: data/02_intermediate/data_with_trip_columns.parquet
+
+trip_statistics:
+  type: pandas.ParquetDataSet
+  filepath: data/02_intermediate/trip_statistics.parquet

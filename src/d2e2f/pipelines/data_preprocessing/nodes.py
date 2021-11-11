@@ -1,6 +1,38 @@
 import pandas as pd
-from d2e2f import trips
 from .prepare import prepare
+from .trips import numbering, add_trip_columns
+
+
+def slice(df_raw: pd.DataFrame, row_start=0, row_end=-1) -> pd.DataFrame:
+    """Take a slice of the data
+
+    Parameters
+    ----------
+    df_raw : pd.DataFrame
+        raw data
+    row_start : int, optional
+        start of the slice, by default 0
+    row_end : int, optional
+        end of the slice, by default -1 (all)
+
+    Returns
+    -------
+    pd.DataFrame
+        sliced data frame
+
+    Raises
+    ------
+    ValueError
+        If the slice is to large an error is raised
+    """
+
+    if row_start > len(df_raw) - 1:
+        raise ValueError(f"row_start={row_start} exceeds length of DataFrame")
+
+    if row_end > len(df_raw) - 1:
+        row_end = -1
+
+    return df_raw.iloc[row_start:row_end]
 
 
 def preprocess(
@@ -33,7 +65,7 @@ def preprocess_trip_numbering(
     df_raw.index = pd.to_datetime(df_raw.index)
     df_raw.sort_index(inplace=True)
 
-    df_ = trips.numbering(
+    df_ = numbering(
         df=df_raw,
         start_number=start_number,
         trip_separator=trip_separator,
@@ -45,6 +77,11 @@ def preprocess_trip_numbering(
     df_.reset_index(inplace=True, drop=True)
 
     return df_
+
+
+def preprocess_trip_columns(df: pd.DataFrame) -> pd.DataFrame:
+    df = add_trip_columns(df=df)
+    return df
 
 
 # def preprocess_csv_to_parquet(companies: pd.DataFrame) -> pd.DataFrame:
