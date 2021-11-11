@@ -39,11 +39,13 @@ def preprocess(
     df_raw: pd.DataFrame,
     renames: dict,
     do_calculate_rudder_angles=False,
+    min_speed=0.01,
 ) -> pd.DataFrame:
     df_ = prepare(
         df_raw=df_raw,
         do_calculate_rudder_angles=do_calculate_rudder_angles,
         renames=renames,
+        min_speed=min_speed,
     )
 
     return df_

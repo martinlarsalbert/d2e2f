@@ -30,3 +30,9 @@ trip_statistics:
   filepath: data/02_intermediate/trip_statistics.parquet
   save_args:
     use_deprecated_int96_timestamps: True
+
+trip_statistics_clean:
+  type: pandas.ParquetDataSet
+  filepath: data/02_intermediate/trip_statistics_clean.parquet
+  save_args:
+    use_deprecated_int96_timestamps: True

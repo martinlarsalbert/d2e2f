@@ -2,7 +2,9 @@ import pandas as pd
 import numpy as np
 
 
-def prepare(df_raw: pd.DataFrame, do_calculate_rudder_angles=False, renames={}):
+def prepare(
+    df_raw: pd.DataFrame, do_calculate_rudder_angles=False, min_speed=0.01, renames={}
+):
     # df_raw = dataset.take(n_rows).to_pandas_dataframe()
 
     rename = {value: key for key, value in renames.items()}
@@ -13,6 +15,10 @@ def prepare(df_raw: pd.DataFrame, do_calculate_rudder_angles=False, renames={}):
     df.index.name = "time"
 
     df["sog"] *= 1.852 / 3.6
+
+    mask = df["sog"] > min_speed
+    df = df.loc[mask].copy()
+
     df = rename_columns(df, rename=rename)
 
     if do_calculate_rudder_angles:

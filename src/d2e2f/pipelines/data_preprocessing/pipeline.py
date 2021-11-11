@@ -26,6 +26,7 @@ def create_pipeline(**kwargs):
                 inputs=[
                     "raw_data_slice",
                     "params:renames",
+                    "params:min_speed",
                 ],
                 outputs="preprocessed_data",
                 name="preprocess_node",

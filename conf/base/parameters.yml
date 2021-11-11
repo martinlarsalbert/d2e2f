@@ -1,8 +1,10 @@
 ## Slice
 row_start: 0
-row_end: 10000 # (-1 for all)
+row_end: 100000 # (-1 for all)
 
 ## preprocess
+min_speed: 0.01
+
 renames:
   time: Tidpunkt [UTC]
   latitude: Latitud (deg)
@@ -47,3 +49,7 @@ do_calculate_rudder_angles: False
 ## preprocess_trip_numbering
 start_number: 0
 trip_separator: 0 days 00:00:20
+
+## Clean statistics:
+min_distance: 4000
+min_time: 700
