@@ -118,7 +118,7 @@ def add_trip_columns(df: pd.DataFrame) -> pd.DataFrame:
     # 0 : Helsingör -> Helsingborg
     # 1 : Helsingör <- Helsingborg
     df["trip_direction"] = trips["longitude"].transform(
-        lambda x: 0 if (x[0] < 12.65) else 1
+        lambda x: "Helsingør-Helsingborg" if (x[0] < 12.65) else "Helsingborg-Helsingør"
     )
 
     for trip_no, trip in trips:

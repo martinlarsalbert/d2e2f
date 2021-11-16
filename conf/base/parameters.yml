@@ -1,6 +1,7 @@
 ## Slice
 row_start: 0
-row_end: 100000 # (-1 for all)
+#row_end: 100000 # (-1 for all)
+row_end: -1 # (-1 for all)
 
 ## preprocess
 min_speed: 0.01

@@ -4,8 +4,15 @@
 # Link: https://kedro.readthedocs.io/en/stable/05_data/01_data_catalog.html
 
 raw_data:
-  type: pandas.CSVDataSet
-  filepath: E:/dev/datadriven-energieffektivisering-av-fartyg/data/raw/2021-07-01-forsea-vind/tycho-brahe-wind-2021-04-10--2021-06-30.csv
+  type: PartitionedDataSet
+  #filepath: E:/dev/datadriven-energieffektivisering-av-fartyg/data/raw/2021-07-01-forsea-vind
+  path: data/01_raw/raw_data
+  dataset: pandas.CSVDataSet
+
+raw_data_joined:
+  type: PartitionedDataSet
+  path: data/02_intermediate/test
+  dataset: pandas.CSVDataSet
 
 preprocessed_data:
   type: pandas.ParquetDataSet
