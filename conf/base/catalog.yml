@@ -49,3 +49,26 @@ trip_statistics_clean:
     save_args:
       use_deprecated_int96_timestamps: True
 
+trip_statistics_clean_thrusters:
+  type: PartitionedDataSet
+  path: data/02_intermediate/trip_statistics_clean_thrusters
+  dataset:
+    type: pandas.ParquetDataSet
+    save_args:
+      use_deprecated_int96_timestamps: True
+
+trip_statistics_clean_thrusters_outliers:
+  type: PartitionedDataSet
+  path: data/02_intermediate/trip_statistics_clean_thrusters_outliers
+  dataset:
+    type: pandas.ParquetDataSet
+    save_args:
+      use_deprecated_int96_timestamps: True
+
+trip_statistics_joined_thrusters:
+  type: PartitionedDataSet
+  path: data/02_intermediate/trip_statistics_joined_thrusters
+  dataset:
+    type: pandas.ParquetDataSet
+    save_args:
+      use_deprecated_int96_timestamps: True

@@ -9,7 +9,8 @@ def prepare(
 
     rename = {value: key for key, value in renames.items()}
     df = df_raw.rename(columns=rename)
-    df["P"] = df[[f"P{i+1}" for i in range(4)]].sum(axis=1)
+    if not "P" in df:
+        df["P"] = df[[f"P{i+1}" for i in range(4)]].sum(axis=1)
     check_data(df=df)
 
     df.set_index("time", inplace=True)

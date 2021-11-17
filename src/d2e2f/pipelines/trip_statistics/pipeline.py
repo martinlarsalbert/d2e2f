@@ -1,6 +1,11 @@
 from kedro.pipeline import Pipeline, node
 
-from .nodes import preprocess_trip_statistics, preprocess_clean_statistics
+from .nodes import (
+    preprocess_trip_statistics,
+    preprocess_clean_statistics,
+    clean_thrusters,
+    join_thrusters,
+)
 
 
 def create_pipeline(**kwargs):
@@ -23,6 +28,27 @@ def create_pipeline(**kwargs):
                 ],
                 outputs="trip_statistics_clean",
                 name="preprocess_clean_statistics_node",
+            ),
+            node(
+                func=clean_thrusters,
+                inputs=[
+                    "trip_statistics_clean",
+                    "params:P_max_ratio_diff",
+                    "params:cos_ratio_diff",
+                ],
+                outputs=[
+                    "trip_statistics_clean_thrusters",
+                    "trip_statistics_clean_thrusters_outliers",
+                ],
+                name="clean_thrusters_node",
+            ),
+            node(
+                func=join_thrusters,
+                inputs=[
+                    "trip_statistics_clean_thrusters",
+                ],
+                outputs="trip_statistics_joined_thrusters",
+                name="join_thrusters_node",
             ),
         ]
     )
