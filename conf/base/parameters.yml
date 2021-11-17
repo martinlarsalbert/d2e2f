@@ -16,7 +16,6 @@ renames:
   P2: Effekt EM Thruster 2 (kW)
   P3: Effekt EM Thruster 3 (kW)
   P4: Effekt EM Thruster 4 (kW)
-  P: Effekt EM Thruster Total (kW)
   cog: Kurs över grund (deg)
   sin_pm1: Sin EM1 ()
   sin_pm2: Sin EM2 ()

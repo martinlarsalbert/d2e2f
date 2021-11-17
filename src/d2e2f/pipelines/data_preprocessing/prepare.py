@@ -9,6 +9,9 @@ def prepare(
 
     rename = {value: key for key, value in renames.items()}
     df = df_raw.rename(columns=rename)
+    df["P"] = df[[f"P{i+1}" for i in range(4)]].sum(axis=1)
+    check_data(df=df)
+
     df.set_index("time", inplace=True)
     df.index = pd.to_datetime(df.index)
     df.sort_index(inplace=True)
@@ -27,6 +30,20 @@ def prepare(
     df.dropna(how="all", inplace=True, axis=1)  # remove columns with all NaN
 
     return df
+
+
+def check_data(df):
+
+    mandatory_columns = [
+        "time",
+        "P",
+        "sog",
+        "latitude",
+        "longitude",
+    ]
+
+    missing = set(mandatory_columns) - set(df.columns)
+    assert len(missing) == 0, f"The following columns are missing: {missing}"
 
 
 def calculate_rudder_angles(df: pd.DataFrame, inplace=True, drop=False) -> pd.DataFrame:

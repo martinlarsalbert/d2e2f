@@ -5,41 +5,47 @@
 
 raw_data:
   type: PartitionedDataSet
-  #filepath: E:/dev/datadriven-energieffektivisering-av-fartyg/data/raw/2021-07-01-forsea-vind
-  path: data/01_raw/raw_data
-  dataset: pandas.CSVDataSet
-
-raw_data_joined:
-  type: PartitionedDataSet
-  path: data/02_intermediate/test
+  path: E:/dev/datadriven-energieffektivisering-av-fartyg/data/raw/2021-07-01-forsea-vind
+  #path: data/01_raw/test
   dataset: pandas.CSVDataSet
 
 preprocessed_data:
-  type: pandas.ParquetDataSet
-  filepath: data/02_intermediate/preprocessed_data.parquet
-  save_args:
-    use_deprecated_int96_timestamps: True
+  type: PartitionedDataSet
+  path: data/02_intermediate/preprocessed_data
+  dataset:
+    type: pandas.ParquetDataSet
+    save_args:
+      use_deprecated_int96_timestamps: True
   
 data_with_trip_numbers:
-  type: pandas.ParquetDataSet
-  filepath: data/02_intermediate/data_with_trip_numbers.parquet
-  save_args:
-    use_deprecated_int96_timestamps: True
+  type: PartitionedDataSet
+  path: data/02_intermediate/data_with_trip_numbers
+  dataset:
+    type: pandas.ParquetDataSet
+    save_args:
+      use_deprecated_int96_timestamps: True
 
 data_with_trip_columns:
-  type: pandas.ParquetDataSet
-  filepath: data/02_intermediate/data_with_trip_columns.parquet
-  save_args:
-    use_deprecated_int96_timestamps: True
+  type: PartitionedDataSet
+  path: data/02_intermediate/data_with_trip_columns
+  dataset:
+    type: pandas.ParquetDataSet
+    save_args:
+      use_deprecated_int96_timestamps: True
 
 trip_statistics:
-  type: pandas.ParquetDataSet
-  filepath: data/02_intermediate/trip_statistics.parquet
-  save_args:
-    use_deprecated_int96_timestamps: True
+  type: PartitionedDataSet
+  path: data/02_intermediate/trip_statistics
+  dataset:
+    type: pandas.ParquetDataSet
+    save_args:
+      use_deprecated_int96_timestamps: True
 
 trip_statistics_clean:
-  type: pandas.ParquetDataSet
-  filepath: data/02_intermediate/trip_statistics_clean.parquet
-  save_args:
-    use_deprecated_int96_timestamps: True
+  type: PartitionedDataSet
+  path: data/02_intermediate/trip_statistics_clean
+  dataset:
+    type: pandas.ParquetDataSet
+    save_args:
+      use_deprecated_int96_timestamps: True
+

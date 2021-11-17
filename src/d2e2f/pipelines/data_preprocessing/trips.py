@@ -121,8 +121,9 @@ def add_trip_columns(df: pd.DataFrame) -> pd.DataFrame:
         lambda x: "Helsingør-Helsingborg" if (x[0] < 12.65) else "Helsingborg-Helsingør"
     )
 
-    for trip_no, trip in trips:
-        redefine_heading(df=df, trip=trip)
+    if ("cog" in df) and ("heading" in df):
+        for trip_no, trip in trips:
+            redefine_heading(df=df, trip=trip)
 
     return df
 

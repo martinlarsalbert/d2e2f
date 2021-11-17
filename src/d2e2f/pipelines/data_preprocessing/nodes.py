@@ -1,9 +1,21 @@
 import pandas as pd
+from kedro.io import PartitionedDataSet
+
 from .prepare import prepare
 from .trips import numbering, add_trip_columns
 
 
-def slice(df_raw: pd.DataFrame, row_start=0, row_end=-1) -> pd.DataFrame:
+def slice(loaded: PartitionedDataSet, row_start=0, row_end=-1) -> PartitionedDataSet:
+    partitions = {}
+    for partition_id, partition_load_func in loaded.items():
+        df = partition_load_func()
+        new_id = partition_id.replace(".csv", ".parquet")
+        partitions[new_id] = _slice(df_raw=df, row_start=row_start, row_end=row_end)
+
+    return partitions
+
+
+def _slice(df_raw: pd.DataFrame, row_start=0, row_end=-1) -> pd.DataFrame:
     """Take a slice of the data
 
     Parameters
@@ -36,6 +48,28 @@ def slice(df_raw: pd.DataFrame, row_start=0, row_end=-1) -> pd.DataFrame:
 
 
 def preprocess(
+    loaded: PartitionedDataSet,
+    renames: dict,
+    do_calculate_rudder_angles=False,
+    min_speed=0.01,
+) -> PartitionedDataSet:
+    partitions = {}
+    for partition_id, df in loaded.items():
+        # df = partition_load_func()
+        try:
+            partitions[partition_id] = _preprocess(
+                df_raw=df,
+                renames=renames,
+                do_calculate_rudder_angles=do_calculate_rudder_angles,
+                min_speed=min_speed,
+            )
+        except Exception:
+            raise ValueError(f" failed on partition_id:{partition_id}")
+
+    return partitions
+
+
+def _preprocess(
     df_raw: pd.DataFrame,
     renames: dict,
     do_calculate_rudder_angles=False,
@@ -52,6 +86,25 @@ def preprocess(
 
 
 def preprocess_trip_numbering(
+    loaded: PartitionedDataSet,
+    start_number: int,
+    trip_separator="0 days 00:00:20",
+    initial_speed_separator=0.05,
+) -> PartitionedDataSet:
+    partitions = {}
+    for partition_id, partition_load_func in loaded.items():
+        df = partition_load_func()
+        partitions[partition_id] = _preprocess_trip_numbering(
+            df_raw=df,
+            start_number=start_number,
+            trip_separator=trip_separator,
+            initial_speed_separator=initial_speed_separator,
+        )
+
+    return partitions
+
+
+def _preprocess_trip_numbering(
     df_raw: pd.DataFrame,
     start_number: int,
     trip_separator="0 days 00:00:20",
@@ -73,7 +126,18 @@ def preprocess_trip_numbering(
     return df_
 
 
-def preprocess_trip_columns(df: pd.DataFrame) -> pd.DataFrame:
+def preprocess_trip_columns(
+    loaded: PartitionedDataSet,
+) -> PartitionedDataSet:
+    partitions = {}
+    for partition_id, partition_load_func in loaded.items():
+        df = partition_load_func()
+        partitions[partition_id] = _preprocess_trip_columns(df=df)
+
+    return partitions
+
+
+def _preprocess_trip_columns(df: pd.DataFrame) -> pd.DataFrame:
     df = add_trip_columns(df=df)
     return df
 

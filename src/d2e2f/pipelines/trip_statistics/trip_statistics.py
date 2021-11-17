@@ -5,7 +5,9 @@ import numpy as np
 
 def statistics(df: pd.DataFrame) -> pd.DataFrame:
     trips = df.groupby(by="trip_no")
-    return trips.apply(func=trip_statistics)
+    df_stat = trips.apply(func=trip_statistics)
+    df_stat.index.name = "trip_no"
+    return df_stat
 
 
 def trip_statistics(trip: pd.DataFrame) -> pd.Series:
@@ -41,8 +43,11 @@ def trip_statistics(trip: pd.DataFrame) -> pd.Series:
     df_statistics["trip_time"] = (
         trip.iloc[-1]["trip_time"] - trip.iloc[0]["trip_time"]
     )  # Total trip time makes more sense.
-    df_statistics["trip_no"] = trip.iloc[0]["trip_no"]
-    df_statistics["reversing"] = trip.iloc[0]["reversing"]
+    df_statistics["trip_no"] = int(trip.iloc[0]["trip_no"])
+
+    if "reversing" in trip:
+        df_statistics["reversing"] = trip.iloc[0]["reversing"]
+
     df_statistics["trip_direction"] = trip.iloc[0]["trip_direction"]
 
     return df_statistics

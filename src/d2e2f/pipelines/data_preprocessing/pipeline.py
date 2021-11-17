@@ -14,7 +14,7 @@ def create_pipeline(**kwargs):
             node(
                 func=slice,
                 inputs=[
-                    "raw_data_joined",
+                    "raw_data",
                     "params:row_start",
                     "params:row_end",
                 ],

@@ -33,7 +33,8 @@ from kedro.pipeline import Pipeline
 
 from d2e2f.pipelines import data_preprocessing as dp
 from d2e2f.pipelines import trip_statistics as ts
-from d2e2f.pipelines import join_files as js
+
+# from d2e2f.pipelines import join_files as js
 
 
 def register_pipelines() -> Dict[str, Pipeline]:
@@ -45,14 +46,12 @@ def register_pipelines() -> Dict[str, Pipeline]:
     """
     data_processing_pipeline = dp.create_pipeline()
     trip_statistics_pipeline = ts.create_pipeline()
-    join_files_pipeline = js.create_pipeline()
+    # join_files_pipeline = js.create_pipeline()
 
     return {
-        "__default__": join_files_pipeline
-        + data_processing_pipeline
-        + trip_statistics_pipeline,
+        "__default__": data_processing_pipeline + trip_statistics_pipeline,
         # "__default__": data_processing_pipeline,
-        "js": join_files_pipeline,
+        # "js": join_files_pipeline,
         "dp": data_processing_pipeline,
         "ts": trip_statistics_pipeline,
     }
