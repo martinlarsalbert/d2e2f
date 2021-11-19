@@ -5,6 +5,7 @@ from .nodes import (
     preprocess_clean_statistics,
     clean_thrusters,
     join_thrusters,
+    train_test_split,
 )
 
 
@@ -49,6 +50,17 @@ def create_pipeline(**kwargs):
                 ],
                 outputs="trip_statistics_joined_thrusters",
                 name="join_thrusters_node",
+            ),
+            node(
+                func=train_test_split,
+                inputs=[
+                    "trip_statistics_joined_thrusters",
+                ],
+                outputs=[
+                    "trip_statistics_joined_thrusters_train",
+                    "trip_statistics_joined_thrusters_test",
+                ],
+                name="train_test_split_node",
             ),
         ]
     )

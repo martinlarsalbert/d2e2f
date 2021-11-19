@@ -72,3 +72,26 @@ trip_statistics_joined_thrusters:
     type: pandas.ParquetDataSet
     save_args:
       use_deprecated_int96_timestamps: True
+
+trip_statistics_joined_thrusters_train:
+  type: PartitionedDataSet
+  path: data/05_model_input/trip_statistics_joined_thrusters_train
+  dataset:
+    type: pandas.ParquetDataSet
+    save_args:
+      use_deprecated_int96_timestamps: True
+
+trip_statistics_joined_thrusters_test:
+  type: PartitionedDataSet
+  path: data/05_model_input/trip_statistics_joined_thrusters_test
+  dataset:
+    type: pandas.ParquetDataSet
+    save_args:
+      use_deprecated_int96_timestamps: True
+
+trip_statistics_joined_thrusters_linear_regression_model:
+  type: PartitionedDataSet
+  path: data/06_models/trip_statistics_joined_thrusters_linear_regression_model
+  dataset:
+    type: pickle.PickleDataSet
+

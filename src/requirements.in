@@ -38,3 +38,4 @@ statsmodels
 pykalman
 datashader
 pyproj
+kedro[pandas.CSVDataSet,pandas.ExcelDataSet]
