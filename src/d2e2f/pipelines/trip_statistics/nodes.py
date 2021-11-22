@@ -71,24 +71,83 @@ def clean_thrusters(
         [description]
     """
     partitions_select = {}
-    partitions_outliers = {}
 
     for partition_id, partition_load_func in loaded.items():
         df = partition_load_func()
-        df_select, df_outliers = _clean_thrusters(
+        partitions_select[partition_id] = _clean_thrusters(
             df_stat=df,
             P_max_ratio_diff=P_max_ratio_diff,
             cos_max_ratio_diff=cos_max_ratio_diff,
         )
-        partitions_select[partition_id] = df_select
-        partitions_outliers[partition_id] = df_outliers
 
-    return partitions_select, partitions_outliers
+    return partitions_select
 
 
 def _clean_thrusters(
     df_stat: pd.DataFrame, P_max_ratio_diff=0.3, cos_max_ratio_diff=0.3
 ) -> pd.DataFrame:
+
+    mask = clean_mask(
+        df_stat=df_stat,
+        P_max_ratio_diff=P_max_ratio_diff,
+        cos_max_ratio_diff=cos_max_ratio_diff,
+    )
+    df_select = df_stat.loc[~mask].copy()
+
+    return df_select
+
+
+def outliers_thrusters(
+    loaded: PartitionedDataSet, P_max_ratio_diff=0.3, cos_max_ratio_diff=0.3
+) -> PartitionedDataSet:
+    """Remove runs where:
+      * any of the thrusters have zero power.
+      * (1-P_max_ratio_diff) < P1/P2 < (1-P_max_ratio_diff)
+      * (1-P_max_ratio_diff) < P3/P4 < (1-P_max_ratio_diff)
+      * (1-cos_max_ratio_diff) < cos_pm1/cos_pm2 < (1-cos_max_ratio_diff)
+      * (1-cos_max_ratio_diff) < cos_pm3/cos_pm4 < (1-cos_max_ratio_diff)
+
+
+    Parameters
+    ----------
+    loaded : PartitionedDataSet
+        [description]
+    P_max_ratio_diff=0.3, cos_max_ratio_diff=0.3 : float, optional
+        [description], by default 0.3
+
+    Returns
+    -------
+    PartitionedDataSet
+        [description]
+    """
+    partitions_outliers = {}
+
+    for partition_id, partition_load_func in loaded.items():
+        df = partition_load_func()
+        partitions_outliers[partition_id] = _outliers_thrusters(
+            df_stat=df,
+            P_max_ratio_diff=P_max_ratio_diff,
+            cos_max_ratio_diff=cos_max_ratio_diff,
+        )
+
+    return partitions_outliers
+
+
+def _outliers_thrusters(
+    df_stat: pd.DataFrame, P_max_ratio_diff=0.3, cos_max_ratio_diff=0.3
+) -> pd.DataFrame:
+
+    mask = clean_mask(
+        df_stat=df_stat,
+        P_max_ratio_diff=P_max_ratio_diff,
+        cos_max_ratio_diff=cos_max_ratio_diff,
+    )
+
+    df_outliers = df_stat.loc[mask].copy()
+    return df_outliers
+
+
+def clean_mask(df_stat: pd.DataFrame, P_max_ratio_diff=0.3, cos_max_ratio_diff=0.3):
 
     mask1 = (
         (df_stat["P1"] == 0)
@@ -112,11 +171,7 @@ def _clean_thrusters(
     ) & P_aft_ratio.between((1 - cos_max_ratio_diff), (1 + cos_max_ratio_diff))
 
     mask = mask1 & mask2 & mask3
-
-    df_select = df_stat.loc[~mask].copy()
-    df_outliers = df_stat.loc[mask].copy()
-
-    return df_select, df_outliers
+    return mask
 
 
 def join_thrusters(loaded: PartitionedDataSet) -> PartitionedDataSet:

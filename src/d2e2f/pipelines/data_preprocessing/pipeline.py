@@ -20,6 +20,7 @@ def create_pipeline(**kwargs):
                 ],
                 outputs="raw_data_slice",
                 name="slice_node",
+                tags=["training", "inference"],
             ),
             node(
                 func=preprocess,
@@ -30,6 +31,7 @@ def create_pipeline(**kwargs):
                 ],
                 outputs="preprocessed_data",
                 name="preprocess_node",
+                tags=["training", "inference"],
             ),
             node(
                 func=preprocess_trip_numbering,
@@ -41,6 +43,7 @@ def create_pipeline(**kwargs):
                 ],
                 outputs="data_with_trip_numbers",
                 name="preprocess_trip_numbering_node",
+                tags=["training", "inference"],
             ),
             node(
                 func=preprocess_trip_columns,
@@ -49,6 +52,7 @@ def create_pipeline(**kwargs):
                 ],
                 outputs="data_with_trip_columns",
                 name="preprocess_trip_columns_node",
+                tags=["training", "inference"],
             ),
         ]
     )

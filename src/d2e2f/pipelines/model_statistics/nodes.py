@@ -43,3 +43,29 @@ def _test(df: pd.DataFrame, model, model_id):
 
     log = logging.getLogger(__name__)
     log.info(f"Model accuracy with {model_id} on test set rmse: {rmse}")
+
+
+def inference(
+    data: PartitionedDataSet, models: PartitionedDataSet
+) -> PartitionedDataSet:
+    partitions = {}
+    for partition_id, partition_load_func in data.items():
+        df = partition_load_func()
+        model_id = partition_id.replace(".parquet", ".pickle")
+        model = models[model_id]()
+        partitions[partition_id] = _inference(df=df, model=model, model_id=model_id)
+
+    return partitions
+
+
+def _inference(df: pd.DataFrame, model, model_id):
+
+    features = list(model.params.keys())
+    X = df[features]
+    y = df.pop("P")
+    y_pred = model.predict(X)
+
+    df_pred = df.copy()
+    df_pred["P"] = y_pred
+
+    return df_pred

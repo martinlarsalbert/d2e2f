@@ -95,3 +95,10 @@ trip_statistics_joined_thrusters_linear_regression_model:
   dataset:
     type: pickle.PickleDataSet
 
+trip_statistics_joined_thrusters_linear_regression_prediction:
+  type: PartitionedDataSet
+  path: data/07_model_output/trip_statistics_joined_thrusters_linear_regression_prediction
+  dataset:
+    type: pandas.ParquetDataSet
+    save_args:
+      use_deprecated_int96_timestamps: True
