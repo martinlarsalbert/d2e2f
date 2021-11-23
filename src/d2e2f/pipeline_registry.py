@@ -29,7 +29,7 @@
 """Project pipelines."""
 from typing import Dict
 
-from kedro.pipeline import Pipeline
+from kedro.pipeline import Pipeline, pipeline
 
 from d2e2f.pipelines import data_preprocessing as dp
 from d2e2f.pipelines import trip_statistics as ts
@@ -48,15 +48,16 @@ def register_pipelines() -> Dict[str, Pipeline]:
     data_processing_pipeline = dp.create_pipeline()
     trip_statistics_pipeline = ts.create_pipeline()
     model_statistics_pipeline = ms.create_pipeline()
-    # join_files_pipeline = js.create_pipeline()
+
+    main_pipeline = (
+        data_processing_pipeline + trip_statistics_pipeline + model_statistics_pipeline
+    )
+
+    tycho = pipeline(main_pipeline, namespace="tycho")
+    aurora = pipeline(main_pipeline, namespace="aurora")
 
     return {
-        "__default__": data_processing_pipeline
-        + trip_statistics_pipeline
-        + model_statistics_pipeline,
-        # "__default__": data_processing_pipeline,
-        # "js": join_files_pipeline,
-        "dp": data_processing_pipeline,
-        "ts": trip_statistics_pipeline,
-        "ms": model_statistics_pipeline,
+        "__default__": tycho,
+        "tycho": tycho,
+        "aurora": aurora,
     }

@@ -3,102 +3,103 @@
 # Documentation for this file format can be found in "The Data Catalog"
 # Link: https://kedro.readthedocs.io/en/stable/05_data/01_data_catalog.html
 
-raw_data:
-  type: PartitionedDataSet
-  path: E:/dev/datadriven-energieffektivisering-av-fartyg/data/raw/2021-07-01-forsea-vind
-  #path: data/01_raw/test
-  dataset: pandas.CSVDataSet
-
-preprocessed_data:
-  type: PartitionedDataSet
-  path: data/02_intermediate/preprocessed_data
-  dataset:
-    type: pandas.ParquetDataSet
-    save_args:
-      use_deprecated_int96_timestamps: True
-  
-data_with_trip_numbers:
-  type: PartitionedDataSet
-  path: data/02_intermediate/data_with_trip_numbers
-  dataset:
-    type: pandas.ParquetDataSet
-    save_args:
-      use_deprecated_int96_timestamps: True
-
-data_with_trip_columns:
-  type: PartitionedDataSet
-  path: data/02_intermediate/data_with_trip_columns
-  dataset:
-    type: pandas.ParquetDataSet
-    save_args:
-      use_deprecated_int96_timestamps: True
-
-trip_statistics:
-  type: PartitionedDataSet
-  path: data/02_intermediate/trip_statistics
-  dataset:
-    type: pandas.ParquetDataSet
-    save_args:
-      use_deprecated_int96_timestamps: True
-
-trip_statistics_clean:
-  type: PartitionedDataSet
-  path: data/02_intermediate/trip_statistics_clean
-  dataset:
-    type: pandas.ParquetDataSet
-    save_args:
-      use_deprecated_int96_timestamps: True
-
-trip_statistics_clean_thrusters:
-  type: PartitionedDataSet
-  path: data/02_intermediate/trip_statistics_clean_thrusters
-  dataset:
-    type: pandas.ParquetDataSet
-    save_args:
-      use_deprecated_int96_timestamps: True
-
-trip_statistics_clean_thrusters_outliers:
-  type: PartitionedDataSet
-  path: data/02_intermediate/trip_statistics_clean_thrusters_outliers
-  dataset:
-    type: pandas.ParquetDataSet
-    save_args:
-      use_deprecated_int96_timestamps: True
-
-trip_statistics_joined_thrusters:
-  type: PartitionedDataSet
-  path: data/02_intermediate/trip_statistics_joined_thrusters
-  dataset:
-    type: pandas.ParquetDataSet
-    save_args:
-      use_deprecated_int96_timestamps: True
-
-trip_statistics_joined_thrusters_train:
-  type: PartitionedDataSet
-  path: data/05_model_input/trip_statistics_joined_thrusters_train
-  dataset:
-    type: pandas.ParquetDataSet
-    save_args:
-      use_deprecated_int96_timestamps: True
-
-trip_statistics_joined_thrusters_test:
-  type: PartitionedDataSet
-  path: data/05_model_input/trip_statistics_joined_thrusters_test
-  dataset:
-    type: pandas.ParquetDataSet
-    save_args:
-      use_deprecated_int96_timestamps: True
-
-trip_statistics_joined_thrusters_linear_regression_model:
-  type: PartitionedDataSet
-  path: data/06_models/trip_statistics_joined_thrusters_linear_regression_model
-  dataset:
-    type: pickle.PickleDataSet
-
-trip_statistics_joined_thrusters_linear_regression_prediction:
-  type: PartitionedDataSet
-  path: data/07_model_output/trip_statistics_joined_thrusters_linear_regression_prediction
-  dataset:
-    type: pandas.ParquetDataSet
-    save_args:
-      use_deprecated_int96_timestamps: True
+#raw_data:
+#  type: PartitionedDataSet
+#  path: E:/dev/datadriven-energieffektivisering-av-fartyg/data/raw/2021-07-01-forsea-vind
+#  #path: data/01_raw/test
+#  dataset: pandas.CSVDataSet
+#
+#preprocessed_data:
+#  type: PartitionedDataSet
+#  path: data/02_intermediate/preprocessed_data
+#  dataset:
+#    type: pandas.ParquetDataSet
+#    save_args:
+#      use_deprecated_int96_timestamps: True
+#  
+#data_with_trip_numbers:
+#  type: PartitionedDataSet
+#  path: data/02_intermediate/data_with_trip_numbers
+#  dataset:
+#    type: pandas.ParquetDataSet
+#    save_args:
+#      use_deprecated_int96_timestamps: True
+#
+#data_with_trip_columns:
+#  type: PartitionedDataSet
+#  path: data/02_intermediate/data_with_trip_columns
+#  dataset:
+#    type: pandas.ParquetDataSet
+#    save_args:
+#      use_deprecated_int96_timestamps: True
+#
+#trip_statistics:
+#  type: PartitionedDataSet
+#  path: data/02_intermediate/trip_statistics
+#  dataset:
+#    type: pandas.ParquetDataSet
+#    save_args:
+#      use_deprecated_int96_timestamps: True
+#
+#trip_statistics_clean:
+#  type: PartitionedDataSet
+#  path: data/02_intermediate/trip_statistics_clean
+#  dataset:
+#    type: pandas.ParquetDataSet
+#    save_args:
+#      use_deprecated_int96_timestamps: True
+#
+#trip_statistics_clean_thrusters:
+#  type: PartitionedDataSet
+#  path: data/02_intermediate/trip_statistics_clean_thrusters
+#  dataset:
+#    type: pandas.ParquetDataSet
+#    save_args:
+#      use_deprecated_int96_timestamps: True
+#
+#trip_statistics_clean_thrusters_outliers:
+#  type: PartitionedDataSet
+#  path: data/02_intermediate/trip_statistics_clean_thrusters_outliers
+#  dataset:
+#    type: pandas.ParquetDataSet
+#    save_args:
+#      use_deprecated_int96_timestamps: True
+#
+#trip_statistics_joined_thrusters:
+#  type: PartitionedDataSet
+#  path: data/02_intermediate/trip_statistics_joined_thrusters
+#  dataset:
+#    type: pandas.ParquetDataSet
+#    save_args:
+#      use_deprecated_int96_timestamps: True
+#
+#trip_statistics_joined_thrusters_train:
+#  type: PartitionedDataSet
+#  path: data/05_model_input/trip_statistics_joined_thrusters_train
+#  dataset:
+#    type: pandas.ParquetDataSet
+#    save_args:
+#      use_deprecated_int96_timestamps: True
+#
+#trip_statistics_joined_thrusters_test:
+#  type: PartitionedDataSet
+#  path: data/05_model_input/trip_statistics_joined_thrusters_test
+#  dataset:
+#    type: pandas.ParquetDataSet
+#    save_args:
+#      use_deprecated_int96_timestamps: True
+#
+#trip_statistics_joined_thrusters_linear_regression_model:
+#  type: PartitionedDataSet
+#  path: data/06_models/trip_statistics_joined_thrusters_linear_regression_model
+#  dataset:
+#    type: pickle.PickleDataSet
+#
+#trip_statistics_joined_thrusters_linear_regression_prediction:
+#  type: PartitionedDataSet
+#  path: data/07_model_output/trip_statistics_joined_thrusters_linear_regression_prediction
+#  dataset:
+#    type: pandas.ParquetDataSet
+#    save_args:
+#      use_deprecated_int96_timestamps: True
+#

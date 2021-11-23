@@ -1,0 +1,86 @@
+# Here you can define all your data sets by using simple YAML syntax.
+#
+# Documentation for this file format can be found in "The Data Catalog"
+# Link: https://kedro.readthedocs.io/en/stable/05_data/01_data_catalog.html
+
+aurora.raw_data:
+  type: pandas.CSVDataSet
+  #filepath: E:/dev/datadriven-energieffektivisering-av-fartyg/data/raw/2021-07-01-forsea-vind/aurora-brahe-wind-2021-04-10--2021-06-30.csv
+  filepath: data/01_raw/test/aurora-wind-2021-04-10--2021-06-30.csv
+
+
+aurora.preprocessed_data:
+  type: pandas.ParquetDataSet
+  save_args:
+    use_deprecated_int96_timestamps: True
+  filepath: data/02_intermediate/aurora_preprocessed_data.parquet
+  
+aurora.data_with_trip_numbers:
+  type: pandas.ParquetDataSet
+  save_args:
+    use_deprecated_int96_timestamps: True
+  filepath: data/02_intermediate/aurora_data_with_trip_numbers.parquet
+    
+
+aurora.data_with_trip_columns:
+  type: pandas.ParquetDataSet
+  save_args:
+    use_deprecated_int96_timestamps: True
+  filepath: data/02_intermediate/aurora_data_with_trip_columns.parquet
+    
+aurora.trip_statistics:
+  type: pandas.ParquetDataSet
+  save_args:
+    use_deprecated_int96_timestamps: True
+  filepath: data/02_intermediate/aurora_trip_statistics.parquet
+    
+aurora.trip_statistics_clean:
+  type: pandas.ParquetDataSet
+  save_args:
+    use_deprecated_int96_timestamps: True
+  filepath: data/02_intermediate/aurora_trip_statistics_clean.parquet
+    
+
+aurora.trip_statistics_clean_thrusters:
+  type: pandas.ParquetDataSet
+  save_args:
+    use_deprecated_int96_timestamps: True
+  filepath: data/02_intermediate/aurora_trip_statistics_clean_thrusters.parquet
+    
+
+aurora.trip_statistics_clean_thrusters_outliers:
+  type: pandas.ParquetDataSet
+  save_args:
+    use_deprecated_int96_timestamps: True
+  filepath: data/02_intermediate/aurora_trip_statistics_clean_thrusters_outliers.parquet
+    
+aurora.trip_statistics_joined_thrusters:
+  type: pandas.ParquetDataSet
+  save_args:
+    use_deprecated_int96_timestamps: True
+  filepath: data/02_intermediate/aurora_trip_statistics_joined_thrusters.parquet
+    
+aurora.trip_statistics_joined_thrusters_train:
+  type: pandas.ParquetDataSet
+  save_args:
+    use_deprecated_int96_timestamps: True
+  filepath: data/05_model_input/aurora_trip_statistics_joined_thrusters_train.parquet
+  
+aurora.trip_statistics_joined_thrusters_test:
+  type: pandas.ParquetDataSet
+  save_args:
+    use_deprecated_int96_timestamps: True
+  filepath: data/05_model_input/aurora_trip_statistics_joined_thrusters_test
+    
+
+aurora.trip_statistics_joined_thrusters_linear_regression_model:
+  type: pickle.PickleDataSet
+  filepath: data/06_models/aurora_trip_statistics_joined_thrusters_linear_regression_model
+    
+
+aurora.trip_statistics_joined_thrusters_linear_regression_prediction:
+  type: pandas.ParquetDataSet
+  save_args:
+    use_deprecated_int96_timestamps: True
+  filepath: data/07_model_output/aurora_trip_statistics_joined_thrusters_linear_regression_prediction
+    
