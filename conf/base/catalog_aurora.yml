@@ -5,8 +5,8 @@
 
 aurora.raw_data:
   type: pandas.CSVDataSet
-  #filepath: E:/dev/datadriven-energieffektivisering-av-fartyg/data/raw/2021-07-01-forsea-vind/aurora-brahe-wind-2021-04-10--2021-06-30.csv
-  filepath: data/01_raw/test/aurora-wind-2021-04-10--2021-06-30.csv
+  filepath: E:/dev/datadriven-energieffektivisering-av-fartyg/data/raw/2021-07-01-forsea-vind/aurora-wind-2021-04-10--2021-06-30.csv
+  #filepath: data/01_raw/test/aurora-wind-2021-04-10--2021-06-30.csv
 
 
 aurora.preprocessed_data:
@@ -74,9 +74,15 @@ aurora.trip_statistics_joined_thrusters_test:
     
 
 aurora.trip_statistics_joined_thrusters_linear_regression_model:
-  type: pickle.PickleDataSet
-  filepath: data/06_models/aurora_trip_statistics_joined_thrusters_linear_regression_model
-    
+  type: kedro_mlflow.io.artifacts.MlflowArtifactDataSet
+  data_set:
+    type: pickle.PickleDataSet
+    filepath: data/06_models/aurora_trip_statistics_joined_thrusters_linear_regression_model.pkl
+
+aurora.rmse:
+    type: kedro_mlflow.io.metrics.MlflowMetricDataSet
+    key: rmse
+
 
 aurora.trip_statistics_joined_thrusters_linear_regression_prediction:
   type: pandas.ParquetDataSet

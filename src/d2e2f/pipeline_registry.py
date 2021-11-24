@@ -45,16 +45,15 @@ def register_pipelines() -> Dict[str, Pipeline]:
         A mapping from a pipeline name to a ``Pipeline`` object.
 
     """
-    data_processing_pipeline = dp.create_pipeline()
-    trip_statistics_pipeline = ts.create_pipeline()
-    model_statistics_pipeline = ms.create_pipeline()
 
-    main_pipeline = (
-        data_processing_pipeline + trip_statistics_pipeline + model_statistics_pipeline
+    tycho = pipeline(
+        dp.create_pipeline() + ts.create_pipeline() + ms.create_pipeline(),
+        namespace="tycho",
     )
-
-    tycho = pipeline(main_pipeline, namespace="tycho")
-    aurora = pipeline(main_pipeline, namespace="aurora")
+    aurora = pipeline(
+        dp.create_pipeline() + ts.create_pipeline() + ms.create_pipeline(),
+        namespace="aurora",
+    )
 
     return {
         "__default__": tycho,

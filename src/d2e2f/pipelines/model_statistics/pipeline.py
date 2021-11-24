@@ -21,7 +21,7 @@ def create_pipeline(**kwargs):
                     "trip_statistics_joined_thrusters_test",
                     "trip_statistics_joined_thrusters_linear_regression_model",
                 ],
-                outputs=None,
+                outputs="rmse",
                 name="test_linear_regression_node",
                 tags=["training"],
             ),

@@ -1,4 +1,4 @@
-# Copyright 2020 QuantumBlack Visual Analytics Limited
+# Copyright 2021 QuantumBlack Visual Analytics Limited
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,85 +29,18 @@
 """Project hooks."""
 from typing import Any, Dict, Iterable, Optional
 
-from kedro.config import TemplatedConfigLoader
+from kedro.config import ConfigLoader
 from kedro.framework.hooks import hook_impl
 from kedro.io import DataCatalog
-from kedro.pipeline import Pipeline
 from kedro.versioning import Journal
-from kedro_mlflow.pipeline import pipeline_ml_factory
-
-from d2e2f import __version__ as PROJECT_VERSION
-from d2e2f.pipelines import data_preprocessing as dp
-from d2e2f.pipelines import trip_statistics as ts
-from d2e2f.pipelines import model_statistics as ms
-from d2e2f.pipelines import user_app as ua
-
-from d2e2f.pipelines import data_preprocessing as dp
-from d2e2f.pipelines import trip_statistics as ts
-from d2e2f.pipelines import model_statistics as ms
 
 
 class ProjectHooks:
     @hook_impl
-    def register_pipelines(self) -> Dict[str, Pipeline]:
-        """Register the project's pipeline.
-
-        Returns:
-            A mapping from a pipeline name to a ``Pipeline`` object.
-
-        """
-        # data_processing_pipeline = dp.create_pipeline()
-        # trip_statistics_pipeline = ts.create_pipeline()
-        # model_statistics_pipeline = ms.create_pipeline()
-        # user_app_pipeline = ua.create_pipeline()
-
-        # etl_instances_pipeline = etl_pipeline.only_nodes_with_tags("etl_instances")
-        # etl_labels_pipeline = etl_pipeline.only_nodes_with_tags("etl_labels")
-
-        # ml_pipeline = create_ml_pipeline()
-
-        data_processing_pipeline = dp.create_pipeline()
-        trip_statistics_pipeline = ts.create_pipeline()
-        model_statistics_pipeline = ms.create_pipeline()
-
-        pipelines = (
-            data_processing_pipeline
-            + trip_statistics_pipeline
-            + model_statistics_pipeline
-        )
-
-        inference_pipeline = pipelines.only_nodes_with_tags("inference")
-        training_pipeline = pipelines.only_nodes_with_tags("training")
-
-        training_pipeline_ml = pipeline_ml_factory(
-            training=training_pipeline,
-            inference=inference_pipeline,
-            input_name="raw_data",
-            model_name="kedro_mlflow_tutorial",
-            conda_env={
-                "python": 3.7,
-                "pip": [f"kedro_mlflow_tutorial=={PROJECT_VERSION}"],
-            },
-            model_signature="auto",
-        )
-
-        return {
-            "training": training_pipeline_ml,
-            "inference": inference_pipeline,
-            # "user_app": user_app_pipeline,
-            # "__default__": inference_pipeline + user_app_pipeline,
-            "__default__": pipelines,
-        }
-
-    @hook_impl
     def register_config_loader(
-        self, conf_paths: Iterable[str]
-    ) -> TemplatedConfigLoader:
-        return TemplatedConfigLoader(
-            conf_paths,
-            globals_pattern="*globals.yml",
-            globals_dict={},
-        )
+        self, conf_paths: Iterable[str], env: str, extra_params: Dict[str, Any]
+    ) -> ConfigLoader:
+        return ConfigLoader(conf_paths)
 
     @hook_impl
     def register_catalog(
@@ -121,6 +54,3 @@ class ProjectHooks:
         return DataCatalog.from_config(
             catalog, credentials, load_versions, save_version, journal
         )
-
-
-project_hooks = ProjectHooks()

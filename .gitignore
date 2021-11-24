@@ -157,3 +157,4 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+/docs/energy_saving_potential/_build

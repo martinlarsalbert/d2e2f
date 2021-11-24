@@ -41,3 +41,4 @@ pyproj
 kedro[pandas.CSVDataSet,pandas.ExcelDataSet]
 mlflow
 kedro-mlflow
+jupyter-book

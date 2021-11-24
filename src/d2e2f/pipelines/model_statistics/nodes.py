@@ -35,14 +35,14 @@ def fit_linear_regression(df: pd.DataFrame) -> pd.DataFrame:
 
 def test(df: pd.DataFrame, model):
 
-    features = list(model.params.keys())
-    X = df[features]
-    y = df.pop("P")
+    X = linear_regression.features(df=df)
+    y = linear_regression.label(df=df)
     y_pred = model.predict(X)
     rmse = np.sqrt(mean_squared_error(y_true=y, y_pred=y_pred))
 
     # log = logging.getLogger(__name__)
     # log.info(f"Model accuracy with {model_id} on test set rmse: {rmse}")
+    return rmse
 
 
 # def inference(
@@ -60,9 +60,8 @@ def test(df: pd.DataFrame, model):
 
 def inference(df: pd.DataFrame, model):
 
-    features = list(model.params.keys())
-    X = df[features]
-    y = df.pop("P")
+    X = linear_regression.features(df=df)
+
     y_pred = model.predict(X)
 
     df_pred = df.copy()
