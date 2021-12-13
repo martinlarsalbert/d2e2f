@@ -2,5 +2,11 @@
     "files.exclude": {
         "**/__pycache__": true,
         "venv": true
-    }
+    },
+    "python.testing.pytestArgs": [
+        "src",
+        "--no-cov"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true
 }

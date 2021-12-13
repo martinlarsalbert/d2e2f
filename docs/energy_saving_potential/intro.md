@@ -14,7 +14,7 @@ The energy consumption of these ships depend on:
 3. *Environment* : wind, waves and current.
 4. *Energy efficiency of ships*: ship design, propulsion, engines and ship hull condition with fouling.
 
-Only energy saving potential related to the *operation* of the ships is addressed in this project. It is not possible to change the *loading condition*, the environment conditions. The energy potential in improved energy efficiency from ship's overhaul: cleaning ship hull, repair or rebuild the ships, is also not addressed. 
+Only energy saving potential related to the *operation* of the ships is addressed in this project. It is not possible to change the *loading condition* or the environmental conditions. The energy potential of improved energy efficiency from ship's overhaul: cleaning ship hull, repair or rebuild the ships, is also not addressed here. 
 
 The energy consumption from the operation should be estimated. Only the total propulsion energy can be measured however. 
 The additional energy consumptions from the *loading condition*, *environment* and the *energy efficiency of the ships* does therefore make this more complicated. An increase in total energy consumption can originate from either of mentioned components. It is therefore hard to say if a trip with high energy consumption was due to suboptimal operation or bad weather. When analyzing the energy consumption for longer times, it is also hard to say if an increased energy consumption originates from worse operation or that resistance of the ships have increased due to fouling, or the engines have aged etc.
