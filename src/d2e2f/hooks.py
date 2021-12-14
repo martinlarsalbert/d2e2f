@@ -33,14 +33,20 @@ from kedro.config import ConfigLoader
 from kedro.framework.hooks import hook_impl
 from kedro.io import DataCatalog
 from kedro.versioning import Journal
+from kedro.config import TemplatedConfigLoader
 
 
 class ProjectHooks:
     @hook_impl
-    def register_config_loader(
-        self, conf_paths: Iterable[str], env: str, extra_params: Dict[str, Any]
-    ) -> ConfigLoader:
-        return ConfigLoader(conf_paths)
+    def register_config_loader(self, conf_paths: Iterable[str]) -> ConfigLoader:
+        return TemplatedConfigLoader(
+            conf_paths,
+            globals_pattern="*globals.yml",  # read the globals dictionary from project config
+            globals_dict={  # extra keys to add to the globals dictionary, take precedence over globals_pattern
+                "bucket_name": "another_bucket_name",
+                "non_string_key": 10,
+            },
+        )
 
     @hook_impl
     def register_catalog(
@@ -54,3 +60,88 @@ class ProjectHooks:
         return DataCatalog.from_config(
             catalog, credentials, load_versions, save_version, journal
         )
+
+
+from typing import Any, Dict
+
+import mlflow
+import mlflow.sklearn
+from kedro.pipeline.node import Node
+
+_active_run_stack = mlflow.tracking.fluent._active_run_stack
+
+
+class ModelTrackingHooks:
+    """Namespace for grouping all model-tracking hooks with MLflow together."""
+
+    @hook_impl
+    def before_pipeline_run(self, run_params: Dict[str, Any]) -> None:
+        """Hook implementation to start an MLflow run
+        with the same run_id as the Kedro pipeline run.
+        """
+        mlflow.set_experiment("d2e2f")
+        mlflow.start_run(run_name=run_params["run_id"])
+        mlflow.log_params(run_params)
+
+    @hook_impl
+    def before_node_run(self, node: Node, inputs: Dict[str, Any]) -> None:
+
+        if not hasattr(self, "runs"):
+            self.runs = {}
+
+        if node._func_name == "slice":
+            pass
+            # mlflow.set_experiment("d2e2f")
+            # self.runs[node.namespace] = mlflow.start_run(
+            #    run_name=node.namespace, nested=True
+            # )
+
+    @hook_impl
+    def after_node_run(
+        self, node: Node, outputs: Dict[str, Any], inputs: Dict[str, Any]
+    ) -> None:
+        """Hook implementation to add model tracking after some node runs.
+        In this example, we will:
+        * Log the parameters after the data splitting node runs.
+        * Log the model after the model training node runs.
+        * Log the model's metrics after the model evaluating node runs.
+        """
+
+        # self.set_active_node(node=node)
+
+        if node._func_name == "fit_linear_regression":
+
+            model = outputs[
+                f"{node.namespace}.trip_statistics_joined_thrusters_linear_regression_model"
+            ]
+            mlflow.sklearn.log_model(model, f"{node.namespace}_model")
+            if "parameters" in inputs:
+                mlflow.log_params(inputs[f"{node.namespace}_parameters"])
+
+        elif node._func_name == "test":
+            name_space_outputs = {
+                f"{node.namespace}_{key}": value for key, value in outputs.items()
+            }
+            mlflow.log_metrics(name_space_outputs)
+
+    @hook_impl
+    def after_pipeline_run(self) -> None:
+        """Hook implementation to end the MLflow run
+        after the Kedro pipeline finishes.
+        """
+        mlflow.end_run()
+
+    def set_active_node(self, node):
+        """(Not used)
+
+        Parameters
+        ----------
+        node : [type]
+            [description]
+        """
+        run = self.runs[node.namespace]
+        for i, run_ in enumerate(_active_run_stack):
+            if run.info.run_id == run_.info.run_id:
+                break
+        item = _active_run_stack.pop(i)
+        _active_run_stack.insert(0, item)

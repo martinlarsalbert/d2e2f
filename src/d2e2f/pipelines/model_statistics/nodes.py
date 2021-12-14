@@ -2,7 +2,7 @@ import pandas as pd
 from kedro.io import PartitionedDataSet
 import numpy as np
 from typing import Union
-import d2e2f.pipelines.model_statistics.linear_regression as linear_regression
+from .linear_regression import fit, features, label
 from sklearn.metrics import mean_squared_error
 import logging
 
@@ -19,7 +19,7 @@ import logging
 
 def fit_linear_regression(df: pd.DataFrame) -> pd.DataFrame:
 
-    return linear_regression.fit(df=df)
+    return fit(df=df)
 
 
 # def test(
@@ -35,8 +35,8 @@ def fit_linear_regression(df: pd.DataFrame) -> pd.DataFrame:
 
 def test(df: pd.DataFrame, model):
 
-    X = linear_regression.features(df=df)
-    y = linear_regression.label(df=df)
+    X = features(df=df)
+    y = label(df=df)
     y_pred = model.predict(X)
     rmse = np.sqrt(mean_squared_error(y_true=y, y_pred=y_pred))
 
@@ -60,7 +60,7 @@ def test(df: pd.DataFrame, model):
 
 def inference(df: pd.DataFrame, model):
 
-    X = linear_regression.features(df=df)
+    X = features(df=df)
 
     y_pred = model.predict(X)
 

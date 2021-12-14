@@ -1,2 +1,6 @@
-huggingface_split: train # train, test, unsupervised
-run_id_to_serve: 59adbbd705a345b680639eb879dd04b7
+raw_data:
+  aurora: data/01_raw/test/aurora-wind-2021-04-10--2021-06-30.csv
+  #aurora: E:/dev/datadriven-energieffektivisering-av-fartyg/data/raw/2021-07-01-forsea-vind/aurora-wind-2021-04-10--2021-06-30.csv
+  tycho: data/01_raw/test/tycho-brahe-wind-2021-04-10--2021-06-30.csv
+  #tycho: E:/dev/datadriven-energieffektivisering-av-fartyg/data/raw/2021-07-01-forsea-vind/tycho-brahe-wind-2021-04-10--2021-06-30.csv
+

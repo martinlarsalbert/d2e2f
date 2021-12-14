@@ -3,103 +3,95 @@
 # Documentation for this file format can be found in "The Data Catalog"
 # Link: https://kedro.readthedocs.io/en/stable/05_data/01_data_catalog.html
 
-#raw_data:
-#  type: PartitionedDataSet
-#  path: E:/dev/datadriven-energieffektivisering-av-fartyg/data/raw/2021-07-01-forsea-vind
-#  #path: data/01_raw/test
-#  dataset: pandas.CSVDataSet
-#
-#preprocessed_data:
-#  type: PartitionedDataSet
-#  path: data/02_intermediate/preprocessed_data
-#  dataset:
-#    type: pandas.ParquetDataSet
-#    save_args:
-#      use_deprecated_int96_timestamps: True
-#  
-#data_with_trip_numbers:
-#  type: PartitionedDataSet
-#  path: data/02_intermediate/data_with_trip_numbers
-#  dataset:
-#    type: pandas.ParquetDataSet
-#    save_args:
-#      use_deprecated_int96_timestamps: True
-#
-#data_with_trip_columns:
-#  type: PartitionedDataSet
-#  path: data/02_intermediate/data_with_trip_columns
-#  dataset:
-#    type: pandas.ParquetDataSet
-#    save_args:
-#      use_deprecated_int96_timestamps: True
-#
-#trip_statistics:
-#  type: PartitionedDataSet
-#  path: data/02_intermediate/trip_statistics
-#  dataset:
-#    type: pandas.ParquetDataSet
-#    save_args:
-#      use_deprecated_int96_timestamps: True
-#
-#trip_statistics_clean:
-#  type: PartitionedDataSet
-#  path: data/02_intermediate/trip_statistics_clean
-#  dataset:
-#    type: pandas.ParquetDataSet
-#    save_args:
-#      use_deprecated_int96_timestamps: True
-#
-#trip_statistics_clean_thrusters:
-#  type: PartitionedDataSet
-#  path: data/02_intermediate/trip_statistics_clean_thrusters
-#  dataset:
-#    type: pandas.ParquetDataSet
-#    save_args:
-#      use_deprecated_int96_timestamps: True
-#
-#trip_statistics_clean_thrusters_outliers:
-#  type: PartitionedDataSet
-#  path: data/02_intermediate/trip_statistics_clean_thrusters_outliers
-#  dataset:
-#    type: pandas.ParquetDataSet
-#    save_args:
-#      use_deprecated_int96_timestamps: True
-#
-#trip_statistics_joined_thrusters:
-#  type: PartitionedDataSet
-#  path: data/02_intermediate/trip_statistics_joined_thrusters
-#  dataset:
-#    type: pandas.ParquetDataSet
-#    save_args:
-#      use_deprecated_int96_timestamps: True
-#
-#trip_statistics_joined_thrusters_train:
-#  type: PartitionedDataSet
-#  path: data/05_model_input/trip_statistics_joined_thrusters_train
-#  dataset:
-#    type: pandas.ParquetDataSet
-#    save_args:
-#      use_deprecated_int96_timestamps: True
-#
-#trip_statistics_joined_thrusters_test:
-#  type: PartitionedDataSet
-#  path: data/05_model_input/trip_statistics_joined_thrusters_test
-#  dataset:
-#    type: pandas.ParquetDataSet
-#    save_args:
-#      use_deprecated_int96_timestamps: True
-#
-#trip_statistics_joined_thrusters_linear_regression_model:
-#  type: PartitionedDataSet
-#  path: data/06_models/trip_statistics_joined_thrusters_linear_regression_model
-#  dataset:
+## Jinja2
+{% for name in ['tycho','aurora'] %}
+
+{{ name }}.raw_data:
+  type: pandas.CSVDataSet
+  filepath: ${raw_data.{{ name }}}  # (Defined in globals.yml)
+    
+{{ name }}.preprocessed_data:
+  type: pandas.ParquetDataSet
+  save_args:
+    use_deprecated_int96_timestamps: True
+  filepath: data/02_intermediate/{{ name }}_preprocessed_data.parquet
+  
+{{ name }}.data_with_trip_numbers:
+  type: pandas.ParquetDataSet
+  save_args:
+    use_deprecated_int96_timestamps: True
+  filepath: data/02_intermediate/{{ name }}_data_with_trip_numbers.parquet
+    
+
+{{ name }}.data_with_trip_columns:
+  type: pandas.ParquetDataSet
+  save_args:
+    use_deprecated_int96_timestamps: True
+  filepath: data/02_intermediate/{{ name }}_data_with_trip_columns.parquet
+    
+{{ name }}.trip_statistics:
+  type: pandas.ParquetDataSet
+  save_args:
+    use_deprecated_int96_timestamps: True
+  filepath: data/02_intermediate/{{ name }}_trip_statistics.parquet
+    
+{{ name }}.trip_statistics_clean:
+  type: pandas.ParquetDataSet
+  save_args:
+    use_deprecated_int96_timestamps: True
+  filepath: data/02_intermediate/{{ name }}_trip_statistics_clean.parquet
+    
+
+{{ name }}.trip_statistics_clean_thrusters:
+  type: pandas.ParquetDataSet
+  save_args:
+    use_deprecated_int96_timestamps: True
+  filepath: data/02_intermediate/{{ name }}_trip_statistics_clean_thrusters.parquet
+    
+
+{{ name }}.trip_statistics_clean_thrusters_outliers:
+  type: pandas.ParquetDataSet
+  save_args:
+    use_deprecated_int96_timestamps: True
+  filepath: data/02_intermediate/{{ name }}_trip_statistics_clean_thrusters_outliers.parquet
+    
+{{ name }}.trip_statistics_joined_thrusters:
+  type: pandas.ParquetDataSet
+  save_args:
+    use_deprecated_int96_timestamps: True
+  filepath: data/02_intermediate/{{ name }}_trip_statistics_joined_thrusters.parquet
+    
+{{ name }}.trip_statistics_joined_thrusters_train:
+  type: pandas.ParquetDataSet
+  save_args:
+    use_deprecated_int96_timestamps: True
+  filepath: data/05_model_input/{{ name }}_trip_statistics_joined_thrusters_train.parquet
+  
+{{ name }}.trip_statistics_joined_thrusters_test:
+  type: pandas.ParquetDataSet
+  save_args:
+    use_deprecated_int96_timestamps: True
+  filepath: data/05_model_input/{{ name }}_trip_statistics_joined_thrusters_test
+    
+
+{{ name }}.trip_statistics_joined_thrusters_linear_regression_model:
+  type: pickle.PickleDataSet
+  filepath: data/06_models/{{ name }}_trip_statistics_joined_thrusters_linear_regression_model.pkl
+
+  #  type: kedro_mlflow.io.artifacts.MlflowArtifactDataSet
+#  data_set:
 #    type: pickle.PickleDataSet
-#
-#trip_statistics_joined_thrusters_linear_regression_prediction:
-#  type: PartitionedDataSet
-#  path: data/07_model_output/trip_statistics_joined_thrusters_linear_regression_prediction
-#  dataset:
-#    type: pandas.ParquetDataSet
-#    save_args:
-#      use_deprecated_int96_timestamps: True
-#
+#    filepath: data/06_models/{{ name }}_trip_statistics_joined_thrusters_linear_regression_model.pkl
+
+#{{ name }}.rmse:
+#    type: kedro_mlflow.io.metrics.MlflowMetricDataSet
+#    key: rmse
+
+
+{{ name }}.trip_statistics_joined_thrusters_linear_regression_prediction:
+  type: pandas.ParquetDataSet
+  save_args:
+    use_deprecated_int96_timestamps: True
+  filepath: data/07_model_output/{{ name }}_trip_statistics_joined_thrusters_linear_regression_prediction
+
+{% endfor %}
