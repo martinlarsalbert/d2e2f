@@ -75,6 +75,10 @@ class ModelTrackingHooks:
     """Namespace for grouping all model-tracking hooks with MLflow together."""
 
     @hook_impl
+    def after_catalog_created(self, catalog: DataCatalog) -> None:
+        self.catalog = catalog
+
+    @hook_impl
     def before_pipeline_run(self, run_params: Dict[str, Any]) -> None:
         """Hook implementation to start an MLflow run
         with the same run_id as the Kedro pipeline run.
@@ -82,6 +86,10 @@ class ModelTrackingHooks:
         mlflow.set_experiment("d2e2f")
         mlflow.start_run(run_name=run_params["run_id"])
         mlflow.log_params(run_params)
+
+        for dataset_name, dataset in self.catalog.datasets.__dict__.items():
+            if "raw_data" in dataset_name:
+                mlflow.log_param(dataset_name, dataset._filepath)
 
     @hook_impl
     def before_node_run(self, node: Node, inputs: Dict[str, Any]) -> None:

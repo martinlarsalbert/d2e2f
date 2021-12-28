@@ -7,10 +7,15 @@ def prepare(
 ):
     # df_raw = dataset.take(n_rows).to_pandas_dataframe()
 
-    rename = {value: key for key, value in renames.items()}
-    df = df_raw.rename(columns=rename)
+    df = df_raw.rename(columns=renames)
+    df = rename_columns(df, rename=renames)
+
     if not "P" in df:
-        df["P"] = df[[f"P{i+1}" for i in range(4)]].sum(axis=1)
+        try:
+            df["P"] = df[[f"P{i+1}" for i in range(4)]].sum(axis=1)
+        except:
+            pass
+
     check_data(df=df)
 
     df.set_index("time", inplace=True)
@@ -23,10 +28,18 @@ def prepare(
     mask = df["sog"] > min_speed
     df = df.loc[mask].copy()
 
-    df = rename_columns(df, rename=rename)
-
     if do_calculate_rudder_angles:
-        df = calculate_rudder_angles(df=df, drop=False)
+        if "delta1" in df:
+            for i in range(1, 5):
+                delta_key = f"delta{i}"
+                if not delta_key in df:
+                    break
+
+                df[f"sin_pm{i}"] = np.sin(df[delta_key])
+                df[f"cos_pm{i}"] = np.cos(df[delta_key])
+
+        else:
+            df = calculate_rudder_angles(df=df, drop=False)
 
     df.dropna(how="all", inplace=True, axis=1)  # remove columns with all NaN
 
@@ -37,7 +50,6 @@ def check_data(df):
 
     mandatory_columns = [
         "time",
-        "P",
         "sog",
         "latitude",
         "longitude",

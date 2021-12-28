@@ -4,7 +4,7 @@
 # Link: https://kedro.readthedocs.io/en/stable/05_data/01_data_catalog.html
 
 ## Jinja2
-{% for name in ['tycho','aurora'] %}
+{% for name in ['tycho','aurora','uraniborg'] %}
 
 {{ name }}.raw_data:
   type: pandas.CSVDataSet

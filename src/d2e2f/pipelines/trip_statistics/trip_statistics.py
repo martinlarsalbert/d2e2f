@@ -32,11 +32,13 @@ def trip_statistics(trip: pd.DataFrame) -> pd.Series:
     df_statistics["end_time"] = str(end_time)
 
     ## Additional Integrated features:
-    df_statistics["E1"] = integrated["P1"]
-    df_statistics["E2"] = integrated["P2"]
-    df_statistics["E3"] = integrated["P3"]
-    df_statistics["E4"] = integrated["P4"]
-    df_statistics["E"] = integrated["P"]
+    for i in range(1, 5):
+        P_key = f"P{i}"
+        if P_key in integrated:
+            df_statistics[f"E{i}"] = integrated[P_key]
+
+    if "P" in integrated:
+        df_statistics["E"] = integrated["P"]
     #
     df_statistics["distance"] = integrated["sog"]
 

@@ -7,40 +7,39 @@ row_end: -1 # (-1 for all)
 min_speed: 0.01
 
 renames:
-  time: Tidpunkt [UTC]
-  latitude: Latitud (deg)
-  longitude: Longitud (deg)
-  sog: Fart över grund (kts)
-  heading: Stävad kurs (deg)
-  P1: Effekt EM Thruster 1 (kW)
-  P2: Effekt EM Thruster 2 (kW)
-  P3: Effekt EM Thruster 3 (kW)
-  P4: Effekt EM Thruster 4 (kW)
-  P: 'Effekt EM Thruster Total (kW)'
-  cog: Kurs över grund (deg)
-  sin_pm1: Sin EM1 ()
-  sin_pm2: Sin EM2 ()
-  sin_pm3: Sin EM3 ()
-  sin_pm4: Sin EM4 ()
-  cos_pm1: Cos EM1 ()
-  cos_pm2: Cos EM2 ()
-  cos_pm3: Cos EM3 ()
-  cos_pm4: Cos EM4 ()
-  #P_heeling: Effekt heeling (kW)
-  #P_pitch_thruster1: Effekt Pitch Thruster 1 (kW)
-  #P_pitch_thruster2: Effekt Pitch Thruster 2 (kW)
-  #P_pitch_thruster3: Effekt Pitch Thruster 3 (kW)
-  #P_pitch_thruster4: Effekt Pitch Thruster 4 (kW)
-  #P_pitch_thruster1: Effekt Steer Thruster 1 (kW)
-  #P_pitch_thruster2: Effekt Steer Thruster 2 (kW)
-  #P_pitch_thruster3: Effekt Steer Thruster 3 (kW)
-  #P_pitch_thruster4: Effekt Steer Thruster 4 (kW)
-  #Effekt Propulsion Total (kW)
-  #Effekt hotell Total (kW)
-  aw: Relativ vindhastighet (m/s)
-  awa: Relativ vindriktning (deg)
-  w: Vindhastighet (m/s)
-  wa: Vindriktning (deg)
+  Tidpunkt [UTC]: time
+  UTC time: time 
+  Latitud (deg): latitude
+  Latitude (deg): latitude
+  Longitud (deg): longitude
+  Longitude (deg): longitude
+  Fart över grund (kts): sog
+  Speed over ground (kts): sog
+  Stävad kurs (deg): heading
+  Heading (deg): heading
+  Effekt EM Thruster 1 (kW): P1
+  Effekt EM Thruster 2 (kW): P2
+  Effekt EM Thruster 3 (kW): P3
+  Effekt EM Thruster 4 (kW): P4
+  Effekt EM Thruster Total (kW): P 
+  Kurs över grund (deg): cog
+  Course over ground (deg): cog
+  Sin EM1 (): sin_pm1
+  Sin EM2 (): sin_pm2 
+  Sin EM3 (): sin_pm3
+  Sin EM4 (): sin_pm4
+  Cos EM1 (): cos_pm1
+  Cos EM2 (): cos_pm2
+  Cos EM3 (): cos_pm3
+  Cos EM4 (): cos_pm4
+  Thruster angle 1 (deg): delta1
+  Thruster angle 2 (deg): delta2
+  Relativ vindhastighet (m/s): aw
+  Apparent wind speed (m/s): aw
+  Relativ vindriktning (deg): awa
+  Apparent wind direction (deg): awa
+  Vindhastighet (m/s): w 
+  Vindriktning (deg): wa
 
 ## preprocess_trip_numbering:
 initial_speed_separator: 0.05

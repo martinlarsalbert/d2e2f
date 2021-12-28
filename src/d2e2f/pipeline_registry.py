@@ -57,10 +57,16 @@ def register_pipelines() -> Dict[str, Pipeline]:
         namespace="aurora",
     )
 
-    the_pipeline = tycho + aurora
+    uraniborg = pipeline(
+        dp.create_pipeline() + ts.create_pipeline() + ms.create_pipeline(),
+        namespace="uraniborg",
+    )
+
+    the_pipeline = tycho + aurora + uraniborg
 
     return {
         "__default__": the_pipeline,
         "tycho": tycho,
         "aurora": aurora,
+        "uraniborg": uraniborg,
     }
