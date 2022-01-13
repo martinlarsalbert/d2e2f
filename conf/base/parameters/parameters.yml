@@ -54,10 +54,8 @@ trip_separator: 0 days 00:00:20
 min_distance: 4000
 min_time: 700
 
-min_distance: 7000
-min_time: 1200
-min_distance_uraniborg: 4000
-min_time_uraniborg: 700
+min_distance_uraniborg: 7500
+min_time_uraniborg: 1200
 
 
 ## clean_thrusters_node
