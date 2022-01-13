@@ -1,6 +1,7 @@
 from kedro.pipeline import Pipeline, node
 
 from .nodes import (
+    join_files,
     slice,
     preprocess,
     preprocess_trip_numbering,
@@ -12,9 +13,18 @@ def create_pipeline(**kwargs):
     return Pipeline(
         [
             node(
-                func=slice,
+                func=join_files,
                 inputs=[
                     "raw_data",
+                ],
+                outputs="raw_data_joined",
+                name="join_files_node",
+                tags=["training", "inference"],
+            ),
+            node(
+                func=slice,
+                inputs=[
+                    "raw_data_joined",
                     "params:row_start",
                     "params:row_end",
                 ],

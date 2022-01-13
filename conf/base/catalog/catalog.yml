@@ -7,8 +7,11 @@
 {% for name in ['tycho','aurora','uraniborg'] %}
 
 {{ name }}.raw_data:
-  type: pandas.CSVDataSet
-  filepath: ${raw_data.{{ name }}}  # (Defined in globals.yml)
+  type: PartitionedDataSet
+  dataset:
+    type: pandas.CSVDataSet
+  path: ${raw_data.{{ name }}}  # (Defined in globals.yml)
+  filename_suffix: ".csv"
     
 {{ name }}.preprocessed_data:
   type: pandas.ParquetDataSet

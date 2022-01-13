@@ -32,9 +32,12 @@ from typing import Dict
 from kedro.pipeline import Pipeline
 from kedro.pipeline.modular_pipeline import pipeline
 
-from .pipelines import data_preprocessing as dp
-from .pipelines import trip_statistics as ts
-from .pipelines import model_statistics as ms
+from .pipelines import data_preprocessing as data_preprocessing
+from .pipelines import trip_statistics as trip_statistics
+from .pipelines import clean_thrusters_forsea as clean_thrusters_forsea
+from .pipelines import train_test as train_test
+from .pipelines import model_statistics as model_statistics
+
 
 # from d2e2f.pipelines import join_files as js
 
@@ -48,18 +51,31 @@ def register_pipelines() -> Dict[str, Pipeline]:
     """
 
     tycho = pipeline(
-        dp.create_pipeline() + ts.create_pipeline() + ms.create_pipeline(),
+        data_preprocessing.create_pipeline()
+        + trip_statistics.create_pipeline()
+        + clean_thrusters_forsea.create_pipeline()
+        + train_test.create_pipeline()
+        + model_statistics.create_pipeline(),
         namespace="tycho",
     )
 
     aurora = pipeline(
-        dp.create_pipeline() + ts.create_pipeline() + ms.create_pipeline(),
+        data_preprocessing.create_pipeline()
+        + trip_statistics.create_pipeline()
+        + clean_thrusters_forsea.create_pipeline()
+        + train_test.create_pipeline()
+        + model_statistics.create_pipeline(),
         namespace="aurora",
     )
 
     uraniborg = pipeline(
-        dp.create_pipeline() + ts.create_pipeline() + ms.create_pipeline(),
+        data_preprocessing.create_pipeline() + trip_statistics.create_pipeline(),
         namespace="uraniborg",
+        # Changing the minimum distance and time for Uraniborg:ked
+        parameters={
+            "params:min_distance": "params:min_distance_uraniborg",
+            "params:min_time": "params:min_time_uraniborg",
+        },
     )
 
     the_pipeline = tycho + aurora + uraniborg

@@ -88,7 +88,7 @@ class ModelTrackingHooks:
         mlflow.log_params(run_params)
 
         for dataset_name, dataset in self.catalog.datasets.__dict__.items():
-            if "raw_data" in dataset_name:
+            if "raw_data_joined" in dataset_name:
                 mlflow.log_param(dataset_name, dataset._filepath)
 
     @hook_impl

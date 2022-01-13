@@ -5,14 +5,13 @@ from .prepare import prepare
 from .trips import numbering, add_trip_columns
 
 
-# def slice(loaded: PartitionedDataSet, row_start=0, row_end=-1) -> PartitionedDataSet:
-#    partitions = {}
-#    for partition_id, partition_load_func in loaded.items():
-#        df = partition_load_func()
-#        new_id = partition_id.replace(".csv", ".parquet")
-#        partitions[new_id] = _slice(df_raw=df, row_start=row_start, row_end=row_end)
-#
-#    return partitions
+def join_files(partitions: dict) -> pd.DataFrame:
+
+    df = pd.DataFrame()
+    for name, partition_loader in partitions.items():
+        df = df.append(partition_loader())
+
+    return df
 
 
 def slice(df_raw: pd.DataFrame, row_start=0, row_end=-1) -> pd.DataFrame:
