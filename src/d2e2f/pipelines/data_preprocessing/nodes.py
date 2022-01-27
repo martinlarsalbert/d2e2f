@@ -9,7 +9,10 @@ def join_files(partitions: dict) -> pd.DataFrame:
 
     df = pd.DataFrame()
     for name, partition_loader in partitions.items():
-        df = df.append(partition_loader())
+        df_ = partition_loader()
+        # df_clean = df_.dropna()  # A bit dangerous...
+
+        df = df.append(df_)
 
     return df
 

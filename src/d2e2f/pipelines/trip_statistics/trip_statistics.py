@@ -45,7 +45,7 @@ def trip_statistics(trip: pd.DataFrame) -> pd.Series:
     for i in range(1, 5, 1):
         key = f"Consumption ME{i} (L/h)"
         if key in integrated:
-            df_statistics[f"Consumption ME{i} (L)"] = integrated[key]
+            df_statistics[f"Consumption ME{i} (L)"] = integrated[key] / 3600
 
     df_statistics["trip_time"] = (
         trip.iloc[-1]["trip_time"] - trip.iloc[0]["trip_time"]

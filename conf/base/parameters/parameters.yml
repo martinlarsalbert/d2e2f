@@ -9,6 +9,7 @@ min_speed: 0.01
 renames:
   Tidpunkt [UTC]: time
   UTC time: time 
+  Timestamp: time
   Latitud (deg): latitude
   Latitude (deg): latitude
   Longitud (deg): longitude
