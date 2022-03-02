@@ -5,7 +5,6 @@ from dash.dependencies import Input, Output
 import plotly.express as px
 import pandas as pd
 
-# import plotly.graph_objects as go
 import dash_leaflet as dl
 
 external_stylesheets = ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
@@ -14,14 +13,6 @@ app = Dash(__name__, external_stylesheets=external_stylesheets)
 
 styles = {"pre": {"border": "thin lightgrey solid", "overflowX": "scroll"}}
 
-# df = pd.DataFrame(
-#    {
-#        "x": [1, 2, 1, 2],
-#        "y": [1, 2, 3, 4],
-#        "customdata": [1, 2, 3, 4],
-#        "fruit": ["apple", "apple", "orange", "orange"],
-#    }
-# )
 
 df_statistics = pd.read_parquet(
     # "../../data/02_intermediate/uraniborg_trip_statistics_clean.parquet"
@@ -29,7 +20,7 @@ df_statistics = pd.read_parquet(
 )
 
 df = pd.read_parquet(
-    # "../../data/02_intermediate/uraniborg_trip_statistics_clean.parquet"
+    # "../../data/02_intermediate/uraniborg_data_with_trip_columns.parquet"
     "../../data/02_intermediate/aurora_data_with_trip_columns.parquet"
 )
 df["trip_no"] = df["trip_no"].astype(int)
@@ -38,10 +29,10 @@ trips_selected = trips.get_group(list(trips.groups.keys())[0])
 
 fig_statistics = px.scatter(
     df_statistics,
-    x="sog",
     y="E",
     color="trip_direction",
     custom_data=["trip_no"],
+    height=300,
 )
 fig_statistics.update_layout(clickmode="event+select")
 fig_statistics.update_traces(marker_size=10)
@@ -51,45 +42,17 @@ fig_trips = px.line(
     x="trip_time",
     y="P",
     color="trip_no",
+    height=300,
 )
+fig_trips_yaxis_range = [0, df["P"].max()]
+fig_trips_xaxis_range = [df["trip_time"].min(), df["trip_time"].max()]
 
-
-# def plot_trips(
-#    df: pd.DataFrame,
-#    time_step="30S",
-#    width=1000,
-#    height=600,
-#    zoom_start=14,
-#    color_key="cog",
-#    colormap=["green", "red"],
-# ):
-#
-#    lines = []
-#    for trip_no, trip in df.groupby("trip_no"):
-#
-#        df_ = trip.resample(time_step).mean()
-#        df_.dropna(subset=["latitude", "longitude"], inplace=True)
-#
-#        points = df_[["latitude", "longitude"]].to_records(index=False)
-#
-#        popup = "trip: %i" % trip_no
-#        color = "#00FF00" if trip.iloc[0]["trip_direction"] == 0 else "#FF0000"
-#        line = dl.Polyline(
-#            positions=points,
-#            opacity=0.30,
-#        )
-#        lines.append(line)
-#
-#    # map = dl.Map(
-#    #    [dl.TileLayer()] + lines, style={"width": f"{width}px", "height": f"{height}px"}
-#    # )
-#
-#    return map
-
+fig_trips.update_yaxes(range=fig_trips_yaxis_range)
+fig_trips.update_xaxes(range=fig_trips_xaxis_range)
 
 map = dl.Map(
     [dl.TileLayer(), dl.LayerGroup(id="trips")],
-    style={"width": f"1000px", "height": f"800px"},
+    style={"width": f"1500px", "height": f"300px"},
     center=[df["latitude"].mean(), df["longitude"].mean()],
     zoom=14,
     id="map",
@@ -98,90 +61,17 @@ map = dl.Map(
 
 app.layout = html.Div(
     [
-        dcc.Graph(id="basic-interactions", figure=fig_statistics),
-        dcc.Graph(id="figure_trips", figure=fig_trips),
+        dcc.Graph(
+            id="basic-interactions",
+            figure=fig_statistics,
+        ),
         map,
-        html.Div(
-            className="row",
-            children=[
-                html.Div(
-                    [
-                        dcc.Markdown(
-                            """
-                **Hover Data**
-
-                Mouse over values in the graph.
-            """
-                        ),
-                        html.Pre(id="hover-data", style=styles["pre"]),
-                    ],
-                    className="three columns",
-                ),
-                html.Div(
-                    [
-                        dcc.Markdown(
-                            """
-                **Click Data**
-
-                Click on points in the graph.
-            """
-                        ),
-                        html.Pre(id="click-data", style=styles["pre"]),
-                    ],
-                    className="three columns",
-                ),
-                html.Div(
-                    [
-                        dcc.Markdown(
-                            """
-                **Selection Data**
-
-                Choose the lasso or rectangle tool in the graph's menu
-                bar and then select points in the graph.
-
-                Note that if `layout.clickmode = 'event+select'`, selection data also
-                accumulates (or un-accumulates) selected data if you hold down the shift
-                button while clicking.
-            """
-                        ),
-                        html.Pre(id="selected-data", style=styles["pre"]),
-                    ],
-                    className="three columns",
-                ),
-                html.Div(
-                    [
-                        dcc.Markdown(
-                            """
-                **Zoom and Relayout Data**
-
-                Click and drag on the graph to zoom or click on the zoom
-                buttons in the graph's menu bar.
-                Clicking on legend items will also fire
-                this event.
-            """
-                        ),
-                        html.Pre(id="relayout-data", style=styles["pre"]),
-                    ],
-                    className="three columns",
-                ),
-            ],
+        dcc.Graph(
+            id="figure_trips",
+            figure=fig_trips,
         ),
     ]
 )
-
-
-@app.callback(
-    Output("hover-data", "children"), Input("basic-interactions", "hoverData")
-)
-def display_hover_data(hoverData):
-    return json.dumps(hoverData, indent=2)
-
-
-@app.callback(
-    Output("click-data", "children"), Input("basic-interactions", "clickData")
-)
-def display_click_data(clickData):
-    return json.dumps(clickData, indent=2)
 
 
 @app.callback(
@@ -203,7 +93,10 @@ def update_trips(clickData):
         x="trip_time",
         y="P",
         color="trip_no",
+        height=300,
     )
+    fig_trips.update_yaxes(range=fig_trips_yaxis_range)
+    fig_trips.update_xaxes(range=fig_trips_xaxis_range)
 
     return fig_trips
 
@@ -234,20 +127,6 @@ def update_map(clickData, time_step="30S"):
         lines.append(line)
 
     return lines
-
-
-@app.callback(
-    Output("selected-data", "children"), Input("basic-interactions", "selectedData")
-)
-def display_selected_data(selectedData):
-    return json.dumps(selectedData, indent=2)
-
-
-@app.callback(
-    Output("relayout-data", "children"), Input("basic-interactions", "relayoutData")
-)
-def display_relayout_data(relayoutData):
-    return json.dumps(relayoutData, indent=2)
 
 
 if __name__ == "__main__":
