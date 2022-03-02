@@ -21,24 +21,40 @@ styles = {"pre": {"border": "thin lightgrey solid", "overflowX": "scroll"}}
 # )
 
 df_statistics = pd.read_parquet(
-    "../../data/02_intermediate/uraniborg_trip_statistics_clean.parquet"
+    # "../../data/02_intermediate/uraniborg_trip_statistics_clean.parquet"
+    "../../data/02_intermediate/aurora_trip_statistics_clean.parquet"
 )
 
-fig = px.scatter(
+df = pd.read_parquet(
+    # "../../data/02_intermediate/uraniborg_trip_statistics_clean.parquet"
+    "../../data/02_intermediate/aurora_data_with_trip_columns.parquet"
+)
+df["trip_no"] = df["trip_no"].astype(int)
+trips = df.groupby(by="trip_no")
+trips_selected = trips.get_group(list(trips.groups.keys())[0])
+
+fig_statistics = px.scatter(
     df_statistics,
     x="sog",
-    y="Consumption ME1 (L/h)",
+    y="E",
     color="trip_direction",
     custom_data=["trip_no"],
 )
 
-fig.update_layout(clickmode="event+select")
+fig_trips = px.line(
+    trips_selected,
+    x="trip_time",
+    y="P",
+    color="trip_no",
+)
 
-fig.update_traces(marker_size=20)
+fig_statistics.update_layout(clickmode="event+select")
+fig_statistics.update_traces(marker_size=10)
 
 app.layout = html.Div(
     [
-        dcc.Graph(id="basic-interactions", figure=fig),
+        dcc.Graph(id="basic-interactions", figure=fig_statistics),
+        dcc.Graph(id="figure_trips", figure=fig_trips),
         html.Div(
             className="row",
             children=[
@@ -120,6 +136,30 @@ def display_hover_data(hoverData):
 )
 def display_click_data(clickData):
     return json.dumps(clickData, indent=2)
+
+
+@app.callback(
+    Output("figure_trips", "figure"), Input("basic-interactions", "selectedData")
+)
+def update_trips(clickData):
+
+    if clickData is None:
+        trip_nos = [list(trips.groups.keys())[0]]
+    else:
+        points = clickData["points"]
+        trip_nos = [point["customdata"][0] for point in points]
+
+    trips_selected = [trips.get_group(trip_no) for trip_no in trip_nos]
+    trips_selected = pd.concat(trips_selected)
+
+    fig_trips = px.line(
+        trips_selected,
+        x="trip_time",
+        y="P",
+        color="trip_no",
+    )
+
+    return fig_trips
 
 
 @app.callback(
