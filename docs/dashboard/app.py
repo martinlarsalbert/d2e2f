@@ -4,6 +4,7 @@ from dash import Dash, dcc, html
 from dash.dependencies import Input, Output
 import plotly.express as px
 import pandas as pd
+import plotly.graph_objects as go
 
 external_stylesheets = ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
 
@@ -48,6 +49,24 @@ fig_trips = px.line(
     color="trip_no",
 )
 
+map = go.Figure()
+map.add_trace(
+    go.Scattergeo(
+        locationmode="USA-states",
+        lon=trips_selected["longitude"].values,
+        lat=trips_selected["latitude"].values,
+        hoverinfo="text",
+        # text=trips["trip_no"],
+        mode="markers",
+        marker=dict(
+            size=2,
+            color="rgb(255, 0, 0)",
+            line=dict(width=3, color="rgba(68, 68, 68, 0)"),
+        ),
+    )
+)
+
+
 fig_statistics.update_layout(clickmode="event+select")
 fig_statistics.update_traces(marker_size=10)
 
@@ -55,6 +74,7 @@ app.layout = html.Div(
     [
         dcc.Graph(id="basic-interactions", figure=fig_statistics),
         dcc.Graph(id="figure_trips", figure=fig_trips),
+        dcc.Graph(id="figure_map", figure=map),
         html.Div(
             className="row",
             children=[
