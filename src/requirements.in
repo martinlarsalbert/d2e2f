@@ -24,8 +24,6 @@ dask[distributed]
 scikit-learn
 jupyterlab_templates
 nbstripout
-
-plotly==4.14.3
 ipywidgets>=7.5
 jupyter-dash
 papermill
@@ -42,3 +40,5 @@ kedro[pandas.CSVDataSet,pandas.ExcelDataSet]
 mlflow
 jupyter-book
 folium
+dash
+plotly
