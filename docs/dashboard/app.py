@@ -10,6 +10,7 @@ import dash_leaflet as dl
 external_stylesheets = ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
 
 app = Dash(__name__, external_stylesheets=external_stylesheets)
+app.title = "D2E2F Dashboard"
 
 styles = {"pre": {"border": "thin lightgrey solid", "overflowX": "scroll"}}
 
@@ -29,6 +30,7 @@ trips_selected = trips.get_group(list(trips.groups.keys())[0])
 
 fig_statistics = px.scatter(
     df_statistics,
+    x="start_time",
     y="E",
     color="trip_direction",
     custom_data=["trip_no"],
@@ -37,18 +39,28 @@ fig_statistics = px.scatter(
 fig_statistics.update_layout(clickmode="event+select")
 fig_statistics.update_traces(marker_size=10)
 
-fig_trips = px.line(
-    trips_selected,
-    x="trip_time",
-    y="P",
-    color="trip_no",
-    height=300,
-)
-fig_trips_yaxis_range = [0, df["P"].max()]
-fig_trips_xaxis_range = [df["trip_time"].min(), df["trip_time"].max()]
 
-fig_trips.update_yaxes(range=fig_trips_yaxis_range)
-fig_trips.update_xaxes(range=fig_trips_xaxis_range)
+def plot_trips(trips_selected, key="P"):
+
+    fig = px.line(
+        trips_selected,
+        x="trip_time",
+        y=key,
+        color="trip_no",
+        height=300,
+    )
+
+    fig_trips_yaxis_range = [0, df[key].max()]
+    fig_trips_xaxis_range = [df["trip_time"].min(), df["trip_time"].max()]
+    fig.update_yaxes(range=fig_trips_yaxis_range)
+    fig.update_xaxes(range=fig_trips_xaxis_range)
+
+    return fig
+
+
+fig_trips_P = plot_trips(trips_selected=trips_selected, key="P")
+fig_trips_sog = plot_trips(trips_selected=trips_selected, key="sog")
+fig_trips_w = plot_trips(trips_selected=trips_selected, key="w")
 
 map = dl.Map(
     [dl.TileLayer(), dl.LayerGroup(id="trips")],
@@ -67,15 +79,28 @@ app.layout = html.Div(
         ),
         map,
         dcc.Graph(
-            id="figure_trips",
-            figure=fig_trips,
+            id="figure_trips_P",
+            figure=fig_trips_P,
+        ),
+        dcc.Graph(
+            id="figure_trips_sog",
+            figure=fig_trips_sog,
+        ),
+        dcc.Graph(
+            id="figure_trips_w",
+            figure=fig_trips_w,
         ),
     ]
 )
 
 
 @app.callback(
-    Output("figure_trips", "figure"), Input("basic-interactions", "selectedData")
+    [
+        Output("figure_trips_P", "figure"),
+        Output("figure_trips_sog", "figure"),
+        Output("figure_trips_w", "figure"),
+    ],
+    Input("basic-interactions", "selectedData"),
 )
 def update_trips(clickData):
 
@@ -95,10 +120,11 @@ def update_trips(clickData):
         color="trip_no",
         height=300,
     )
-    fig_trips.update_yaxes(range=fig_trips_yaxis_range)
-    fig_trips.update_xaxes(range=fig_trips_xaxis_range)
+    fig_trips_P = plot_trips(trips_selected=trips_selected, key="P")
+    fig_trips_sog = plot_trips(trips_selected=trips_selected, key="sog")
+    fig_trips_w = plot_trips(trips_selected=trips_selected, key="w")
 
-    return fig_trips
+    return fig_trips_P, fig_trips_sog, fig_trips_w
 
 
 @app.callback(
