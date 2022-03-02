@@ -42,3 +42,5 @@ jupyter-book
 folium
 dash
 plotly
+dash-leaflet
+dash-extensions

@@ -4,7 +4,9 @@ from dash import Dash, dcc, html
 from dash.dependencies import Input, Output
 import plotly.express as px
 import pandas as pd
-import plotly.graph_objects as go
+
+# import plotly.graph_objects as go
+import dash_leaflet as dl
 
 external_stylesheets = ["https://codepen.io/chriddyp/pen/bWLwgP.css"]
 
@@ -41,6 +43,8 @@ fig_statistics = px.scatter(
     color="trip_direction",
     custom_data=["trip_no"],
 )
+fig_statistics.update_layout(clickmode="event+select")
+fig_statistics.update_traces(marker_size=10)
 
 fig_trips = px.line(
     trips_selected,
@@ -49,32 +53,54 @@ fig_trips = px.line(
     color="trip_no",
 )
 
-map = go.Figure()
-map.add_trace(
-    go.Scattergeo(
-        locationmode="USA-states",
-        lon=trips_selected["longitude"].values,
-        lat=trips_selected["latitude"].values,
-        hoverinfo="text",
-        # text=trips["trip_no"],
-        mode="markers",
-        marker=dict(
-            size=2,
-            color="rgb(255, 0, 0)",
-            line=dict(width=3, color="rgba(68, 68, 68, 0)"),
-        ),
-    )
+
+# def plot_trips(
+#    df: pd.DataFrame,
+#    time_step="30S",
+#    width=1000,
+#    height=600,
+#    zoom_start=14,
+#    color_key="cog",
+#    colormap=["green", "red"],
+# ):
+#
+#    lines = []
+#    for trip_no, trip in df.groupby("trip_no"):
+#
+#        df_ = trip.resample(time_step).mean()
+#        df_.dropna(subset=["latitude", "longitude"], inplace=True)
+#
+#        points = df_[["latitude", "longitude"]].to_records(index=False)
+#
+#        popup = "trip: %i" % trip_no
+#        color = "#00FF00" if trip.iloc[0]["trip_direction"] == 0 else "#FF0000"
+#        line = dl.Polyline(
+#            positions=points,
+#            opacity=0.30,
+#        )
+#        lines.append(line)
+#
+#    # map = dl.Map(
+#    #    [dl.TileLayer()] + lines, style={"width": f"{width}px", "height": f"{height}px"}
+#    # )
+#
+#    return map
+
+
+map = dl.Map(
+    [dl.TileLayer(), dl.LayerGroup(id="trips")],
+    style={"width": f"1000px", "height": f"800px"},
+    center=[df["latitude"].mean(), df["longitude"].mean()],
+    zoom=14,
+    id="map",
 )
 
-
-fig_statistics.update_layout(clickmode="event+select")
-fig_statistics.update_traces(marker_size=10)
 
 app.layout = html.Div(
     [
         dcc.Graph(id="basic-interactions", figure=fig_statistics),
         dcc.Graph(id="figure_trips", figure=fig_trips),
-        dcc.Graph(id="figure_map", figure=map),
+        map,
         html.Div(
             className="row",
             children=[
@@ -180,6 +206,34 @@ def update_trips(clickData):
     )
 
     return fig_trips
+
+
+@app.callback(
+    Output("trips", "children"), [Input("basic-interactions", "selectedData")]
+)
+def update_map(clickData, time_step="30S"):
+
+    if clickData is None:
+        trip_nos = [list(trips.groups.keys())[0]]
+    else:
+        points = clickData["points"]
+        trip_nos = [point["customdata"][0] for point in points]
+
+    trips_selected = [trips.get_group(trip_no) for trip_no in trip_nos]
+    trips_selected = pd.concat(trips_selected)
+
+    lines = []
+    for trip_no, trip in trips_selected.groupby("trip_no"):
+        df_ = trip.resample(time_step).mean()
+        df_.dropna(subset=["latitude", "longitude"], inplace=True)
+        points = df_[["latitude", "longitude"]].to_records(index=False)
+        line = dl.Polyline(
+            positions=points,
+            opacity=0.30,
+        )
+        lines.append(line)
+
+    return lines
 
 
 @app.callback(
