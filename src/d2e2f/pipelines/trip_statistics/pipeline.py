@@ -24,6 +24,7 @@ def create_pipeline(**kwargs):
                     "trip_statistics",
                     "params:min_distance",
                     "params:min_time",
+                    "params:max_time",
                 ],
                 outputs="trip_statistics_clean",
                 name="preprocess_clean_statistics_node",

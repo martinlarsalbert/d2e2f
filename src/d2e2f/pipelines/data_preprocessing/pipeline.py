@@ -5,7 +5,6 @@ from .nodes import (
     slice,
     preprocess,
     preprocess_trip_numbering,
-    preprocess_trip_columns,
 )
 
 
@@ -54,15 +53,6 @@ def create_pipeline(**kwargs):
                 ],
                 outputs="data_with_trip_numbers",
                 name="preprocess_trip_numbering_node",
-                tags=["training", "inference"],
-            ),
-            node(
-                func=preprocess_trip_columns,
-                inputs=[
-                    "data_with_trip_numbers",
-                ],
-                outputs="data_with_trip_columns",
-                name="preprocess_trip_columns_node",
                 tags=["training", "inference"],
             ),
         ]

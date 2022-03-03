@@ -33,6 +33,8 @@ from kedro.pipeline import Pipeline
 from kedro.pipeline.modular_pipeline import pipeline
 
 from .pipelines import data_preprocessing as data_preprocessing
+from .pipelines import trips_forsea as trips_forsea
+from .pipelines import trips_uraniborg as trips_uraniborg
 from .pipelines import trip_statistics as trip_statistics
 from .pipelines import clean_thrusters_forsea as clean_thrusters_forsea
 from .pipelines import train_test as train_test
@@ -52,6 +54,7 @@ def register_pipelines() -> Dict[str, Pipeline]:
 
     tycho = pipeline(
         data_preprocessing.create_pipeline()
+        + trips_forsea.create_pipeline()
         + trip_statistics.create_pipeline()
         + clean_thrusters_forsea.create_pipeline()
         + train_test.create_pipeline()
@@ -62,6 +65,7 @@ def register_pipelines() -> Dict[str, Pipeline]:
 
     aurora = pipeline(
         data_preprocessing.create_pipeline()
+        + trips_forsea.create_pipeline()
         + trip_statistics.create_pipeline()
         + clean_thrusters_forsea.create_pipeline()
         + train_test.create_pipeline()
@@ -71,12 +75,15 @@ def register_pipelines() -> Dict[str, Pipeline]:
     )
 
     uraniborg = pipeline(
-        data_preprocessing.create_pipeline() + trip_statistics.create_pipeline(),
+        data_preprocessing.create_pipeline()
+        + trips_uraniborg.create_pipeline()
+        + trip_statistics.create_pipeline(),
         namespace="uraniborg",
         # Changing the minimum distance and time for Uraniborg:ked
         parameters={
             "params:min_distance": "params:min_distance_uraniborg",
             "params:min_time": "params:min_time_uraniborg",
+            "params:max_time": "params:max_time_uraniborg",
             "params:P_max": "params:uraniborg.P_max",
         },
     )

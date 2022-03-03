@@ -2,7 +2,7 @@ import pandas as pd
 from kedro.io import PartitionedDataSet
 
 from .prepare import prepare
-from .trips import numbering, add_trip_columns
+from .trips import numbering
 
 
 def join_files(partitions: dict) -> pd.DataFrame:
@@ -128,19 +128,3 @@ def preprocess_trip_numbering(
     )
 
     return df_
-
-
-# def preprocess_trip_columns(
-#    loaded: PartitionedDataSet,
-# ) -> PartitionedDataSet:
-#    partitions = {}
-#    for partition_id, partition_load_func in loaded.items():
-#        df = partition_load_func()
-#        partitions[partition_id] = _preprocess_trip_columns(df=df)
-#
-#    return partitions
-
-
-def preprocess_trip_columns(df: pd.DataFrame) -> pd.DataFrame:
-    df = add_trip_columns(df=df)
-    return df
