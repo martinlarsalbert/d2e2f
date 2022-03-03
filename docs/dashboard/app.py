@@ -2,6 +2,7 @@ import json
 
 from dash import Dash, dcc, html
 from dash.dependencies import Input, Output
+
 import plotly.express as px
 import pandas as pd
 
@@ -14,30 +15,44 @@ app.title = "D2E2F Dashboard"
 
 styles = {"pre": {"border": "thin lightgrey solid", "overflowX": "scroll"}}
 
+default = "Tycho Brahe"
+dropdown = dcc.Dropdown(["Tycho Brahe", "Aurora", "Uraniborg"], default, id="dropdown")
 
-df_statistics = pd.read_parquet(
-    "../../data/02_intermediate/uraniborg_trip_statistics_clean.parquet"
-    # "../../data/02_intermediate/aurora_trip_statistics_clean.parquet"
-)
+path_statistics = {
+    "Tycho Brahe": "../../data/02_intermediate/tycho_trip_statistics_clean.parquet",
+    "Aurora": "../../data/02_intermediate/aurora_trip_statistics_clean.parquet",
+    "Uraniborg": "../../data/02_intermediate/uraniborg_trip_statistics_clean.parquet",
+}
 
-df = pd.read_parquet(
-    "../../data/02_intermediate/uraniborg_data_with_trip_columns.parquet"
-    # "../../data/02_intermediate/aurora_data_with_trip_columns.parquet"
-)
+paths = {
+    "Tycho Brahe": "../../data/02_intermediate/tycho_data_with_trip_columns.parquet",
+    "Aurora": "../../data/02_intermediate/aurora_data_with_trip_columns.parquet",
+    "Uraniborg": "../../data/02_intermediate/uraniborg_data_with_trip_columns.parquet",
+}
+
+df_statistics = pd.read_parquet(path_statistics[default])
+df = pd.read_parquet(paths[default])
+
 df["trip_no"] = df["trip_no"].astype(int)
 trips = df.groupby(by="trip_no")
 trips_selected = trips.get_group(list(trips.groups.keys())[0])
 
-fig_statistics = px.scatter(
-    df_statistics,
-    x="start_time",
-    y="E",
-    color="trip_direction",
-    custom_data=["trip_no"],
-    height=300,
-)
-fig_statistics.update_layout(clickmode="event+select")
-fig_statistics.update_traces(marker_size=10)
+
+def plot_statistics(df_statistics):
+    fig_statistics = px.scatter(
+        df_statistics,
+        x="start_time",
+        y="E",
+        color="trip_direction",
+        custom_data=["trip_no"],
+        height=300,
+    )
+    fig_statistics.update_layout(clickmode="event+select")
+    fig_statistics.update_traces(marker_size=10)
+    return fig_statistics
+
+
+fig_statistics = plot_statistics(df_statistics=df_statistics)
 
 
 def plot_trips(trips_selected, key="P"):
@@ -73,6 +88,9 @@ map = dl.Map(
 
 app.layout = html.Div(
     [
+        dcc.Store(id="store"),
+        dcc.Store(id="store_statistics"),
+        dropdown,
         dcc.Graph(
             id="basic-interactions",
             figure=fig_statistics,
@@ -94,13 +112,23 @@ app.layout = html.Div(
 )
 
 
+# @app.callback(
+#    [ServersideOutput("store", "data"), ServersideOutput("store_statistics", "data")],
+#    Input("dropdown", "value"),
+# )
+# def update_ship(value):
+#    df_statistics = pd.read_parquet(path_statistics[value])
+#    df = pd.read_parquet(paths[value])
+#    return df, df_statistics
+
+
 @app.callback(
     [
         Output("figure_trips_P", "figure"),
         Output("figure_trips_sog", "figure"),
         Output("figure_trips_w", "figure"),
     ],
-    Input("basic-interactions", "selectedData"),
+    [Input("basic-interactions", "selectedData")],
 )
 def update_trips(clickData):
 
