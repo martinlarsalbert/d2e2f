@@ -1,20 +1,38 @@
 import pandas as pd
 import numpy as np
+import re
 
 
 def prepare(
-    df_raw: pd.DataFrame, do_calculate_rudder_angles=False, min_speed=0.01, renames={}
+    df_raw: pd.DataFrame,
+    P_max: float = None,
+    do_calculate_rudder_angles=False,
+    min_speed=0.01,
+    renames={},
 ):
     # df_raw = dataset.take(n_rows).to_pandas_dataframe()
 
     df = df_raw.rename(columns=renames)
     df = rename_columns(df, rename=renames)
 
+    # Calculate Power if missing from engine load
+    for i in range(4):
+        if (not f"P{i+1}" in df) and (f"Engine load ME{i+1} (%)" in df):
+            if P_max is None:
+                raise ValueError("Please specify P_max so that power can be calculated")
+            df[f"P{i+1}"] = df[f"Engine load ME{i+1} (%)"] * P_max
+
     if not "P" in df:
-        try:
-            df["P"] = df[[f"P{i+1}" for i in range(4)]].sum(axis=1)
-        except:
-            pass
+
+        regexp = re.compile(r"P\d+$")
+
+        P_columns = []
+        for column in df.columns:
+            if regexp.search(column):
+                P_columns.append(column)
+
+        if len(P_columns) > 0:
+            df["P"] = df[P_columns].sum(axis=1)
 
     check_data(df=df)
 

@@ -83,7 +83,6 @@ def plot_trips(
     zoom_start=14,
     color_key="cog",
     colormap=["green", "red"],
-    map=None,
 ):
 
     f, my_map = get_map(df=df, width=width, height=height, zoom_start=zoom_start)

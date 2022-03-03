@@ -57,6 +57,7 @@ def register_pipelines() -> Dict[str, Pipeline]:
         + train_test.create_pipeline()
         + model_statistics.create_pipeline(),
         namespace="tycho",
+        parameters={"params:P_max": "params:tycho.P_max"},
     )
 
     aurora = pipeline(
@@ -66,6 +67,7 @@ def register_pipelines() -> Dict[str, Pipeline]:
         + train_test.create_pipeline()
         + model_statistics.create_pipeline(),
         namespace="aurora",
+        parameters={"params:P_max": "params:aurora.P_max"},
     )
 
     uraniborg = pipeline(
@@ -75,6 +77,7 @@ def register_pipelines() -> Dict[str, Pipeline]:
         parameters={
             "params:min_distance": "params:min_distance_uraniborg",
             "params:min_time": "params:min_time_uraniborg",
+            "params:P_max": "params:uraniborg.P_max",
         },
     )
 

@@ -16,13 +16,13 @@ styles = {"pre": {"border": "thin lightgrey solid", "overflowX": "scroll"}}
 
 
 df_statistics = pd.read_parquet(
-    # "../../data/02_intermediate/uraniborg_trip_statistics_clean.parquet"
-    "../../data/02_intermediate/aurora_trip_statistics_clean.parquet"
+    "../../data/02_intermediate/uraniborg_trip_statistics_clean.parquet"
+    # "../../data/02_intermediate/aurora_trip_statistics_clean.parquet"
 )
 
 df = pd.read_parquet(
-    # "../../data/02_intermediate/uraniborg_data_with_trip_columns.parquet"
-    "../../data/02_intermediate/aurora_data_with_trip_columns.parquet"
+    "../../data/02_intermediate/uraniborg_data_with_trip_columns.parquet"
+    # "../../data/02_intermediate/aurora_data_with_trip_columns.parquet"
 )
 df["trip_no"] = df["trip_no"].astype(int)
 trips = df.groupby(by="trip_no")

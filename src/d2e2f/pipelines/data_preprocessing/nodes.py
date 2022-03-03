@@ -74,11 +74,13 @@ def slice(df_raw: pd.DataFrame, row_start=0, row_end=-1) -> pd.DataFrame:
 def preprocess(
     df_raw: pd.DataFrame,
     renames: dict,
-    do_calculate_rudder_angles=False,
     min_speed=0.01,
+    P_max: float = None,
+    do_calculate_rudder_angles=False,
 ) -> pd.DataFrame:
     df_ = prepare(
         df_raw=df_raw,
+        P_max=P_max,
         do_calculate_rudder_angles=do_calculate_rudder_angles,
         renames=renames,
         min_speed=min_speed,
