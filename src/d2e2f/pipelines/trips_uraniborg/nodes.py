@@ -48,6 +48,12 @@ def add_trip_columns(df: pd.DataFrame) -> pd.DataFrame:
         lambda x: "Ven-Landskrona" if (x[0] < x.quantile(0.10)) else "Landskrona-Ven"
     )
 
+    df["thrust_factor"] = np.where(
+        df["trip_direction"] == "Landskrona-Ven",
+        df["Consumption ME1 (L/h)"] / df["consumption"],
+        df["Consumption ME2 (L/h)"] / df["consumption"],
+    )
+
     ## Correcting apparent wind angle "Helsingborg-Helsingør"
     # mask = df["trip_direction"] == "Helsingborg-Helsingør"
     # df.loc[mask, "awa"] = np.mod(df.loc[mask, "awa"] + 180, 360)

@@ -47,6 +47,8 @@ def trip_statistics(trip: pd.DataFrame) -> pd.Series:
         if key in integrated:
             df_statistics[f"Consumption ME{i} (L)"] = integrated[key] / 3600
 
+    df_statistics["consumption"] = integrated["consumption"] / 3600
+
     df_statistics["trip_time"] = (
         trip.iloc[-1]["trip_time"] - trip.iloc[0]["trip_time"]
     )  # Total trip time makes more sense.

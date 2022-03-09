@@ -34,6 +34,15 @@ def prepare(
         if len(P_columns) > 0:
             df["P"] = df[P_columns].sum(axis=1)
 
+    # Add consumptions
+    consumption_columns = [
+        f"Consumption ME{i+1} (L/h)"
+        for i in range(4)
+        if f"Consumption ME{i+1} (L/h)" in df
+    ]
+    if len(consumption_columns) > 0:
+        df["consumption"] = df[consumption_columns].sum(axis=1)
+
     check_data(df=df)
 
     df.set_index("time", inplace=True)

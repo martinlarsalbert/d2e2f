@@ -11,11 +11,11 @@ import dash_leaflet as dl
 import sys
 
 
-def plot_statistics(df_statistics):
+def plot_statistics(df_statistics, key="E"):
     fig_statistics = px.scatter(
         df_statistics,
         x="start_time",
-        y="E",
+        y=key,
         color="trip_direction",
         custom_data=["trip_no"],
         height=300,
@@ -25,14 +25,10 @@ def plot_statistics(df_statistics):
     return fig_statistics
 
 
-def plot_trips(trips_selected, df, key="P"):
+def plot_trips(trips_selected, df, key="P", labels={}):
 
     fig = px.line(
-        trips_selected,
-        x="trip_time",
-        y=key,
-        color="trip_no",
-        height=300,
+        trips_selected, x="trip_time", y=key, color="trip_no", height=300, labels=labels
     )
 
     fig_trips_yaxis_range = [0, df[key].max()]
@@ -67,6 +63,12 @@ def create(ship="uraniborg"):
         "uraniborg": "../../data/02_intermediate/uraniborg_data_with_trip_columns.parquet",
     }
 
+    if ship == "uraniborg":
+        key_consumption = key = "consumption"
+    else:
+        key_consumption = "E"
+        key = "P"
+
     titles = {
         "tycho": "Tycho Brahe",
         "aurora": "Aurora",
@@ -83,11 +85,18 @@ def create(ship="uraniborg"):
     trips = df.groupby(by="trip_no")
     trips_selected = trips.get_group(list(trips.groups.keys())[0])
 
-    fig_statistics = plot_statistics(df_statistics=df_statistics)
+    fig_statistics = plot_statistics(df_statistics=df_statistics, key=key_consumption)
 
-    fig_trips_P = plot_trips(trips_selected=trips_selected, df=df, key="P")
+    fig_trips_P = plot_trips(trips_selected=trips_selected, df=df, key=key)
+
     fig_trips_sog = plot_trips(trips_selected=trips_selected, df=df, key="sog")
     fig_trips_w = plot_trips(trips_selected=trips_selected, df=df, key="w")
+
+    fig_fwd_thruster = plot_trips(
+        trips_selected=trips_selected,
+        df=df,
+        key=["Consumption ME1 (L/h)", "Consumption ME2 (L/h)"],
+    )
 
     map = dl.Map(
         [dl.TileLayer(), dl.LayerGroup(id="trips")],
@@ -117,6 +126,10 @@ def create(ship="uraniborg"):
                 id="figure_trips_w",
                 figure=fig_trips_w,
             ),
+            dcc.Graph(
+                id="fig_fwd_thruster",
+                figure=fig_fwd_thruster,
+            ),
         ]
     )
 
@@ -125,6 +138,7 @@ def create(ship="uraniborg"):
             Output("figure_trips_P", "figure"),
             Output("figure_trips_sog", "figure"),
             Output("figure_trips_w", "figure"),
+            Output("fig_fwd_thruster", "figure"),
         ],
         [Input("basic-interactions", "selectedData")],
     )
@@ -146,11 +160,16 @@ def create(ship="uraniborg"):
             color="trip_no",
             height=300,
         )
-        fig_trips_P = plot_trips(trips_selected=trips_selected, df=df, key="P")
+        fig_trips_P = plot_trips(trips_selected=trips_selected, df=df, key=key)
         fig_trips_sog = plot_trips(trips_selected=trips_selected, df=df, key="sog")
         fig_trips_w = plot_trips(trips_selected=trips_selected, df=df, key="w")
+        fig_fwd_thruster = plot_trips(
+            trips_selected=trips_selected,
+            df=df,
+            key=["Consumption ME1 (L/h)", "Consumption ME2 (L/h)"],
+        )
 
-        return fig_trips_P, fig_trips_sog, fig_trips_w
+        return fig_trips_P, fig_trips_sog, fig_trips_w, fig_fwd_thruster
 
     @app.callback(
         Output("trips", "children"), [Input("basic-interactions", "selectedData")]
