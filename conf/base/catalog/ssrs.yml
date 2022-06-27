@@ -1,0 +1,21 @@
+ssrs.raw_data:
+  type: PartitionedDataSet
+  dataset:
+    type: pandas.JSONDataSet
+    load_args:
+      compression: gzip
+      lines: True
+      orient: columns
+  path: data/01_raw/sendaway
+  filename_suffix: ".txt.gz"
+
+ssrs.data:
+  type: PartitionedDataSet
+  dataset:
+    type: pandas.CSVDataSet
+    load_args:
+      index_col: 0
+    save_args:
+      index: True
+  path: data/02_intermediate/ssrs
+  filename_suffix: ".csv"

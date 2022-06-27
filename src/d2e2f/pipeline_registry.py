@@ -31,6 +31,7 @@ from typing import Dict
 
 from kedro.pipeline import Pipeline
 from kedro.pipeline.modular_pipeline import pipeline
+from pytest import param
 
 from .pipelines import data_preprocessing as data_preprocessing
 from .pipelines import trips_forsea as trips_forsea
@@ -39,7 +40,7 @@ from .pipelines import trip_statistics as trip_statistics
 from .pipelines import clean_thrusters_forsea as clean_thrusters_forsea
 from .pipelines import train_test as train_test
 from .pipelines import model_statistics as model_statistics
-
+from .pipelines import load_datavarde
 
 # from d2e2f.pipelines import join_files as js
 
@@ -90,9 +91,17 @@ def register_pipelines() -> Dict[str, Pipeline]:
 
     the_pipeline = tycho + aurora + uraniborg
 
+    namespace = "ssrs"
+    load_datavarde_pipeline = pipeline(
+        load_datavarde.create_pipeline(),
+        namespace=namespace,
+        parameters={"params:excludes": f"params:{namespace}.excludes"},
+    )
+
     return {
         "__default__": the_pipeline,
         "tycho": tycho,
         "aurora": aurora,
         "uraniborg": uraniborg,
+        "load_ssrs": load_datavarde_pipeline,
     }

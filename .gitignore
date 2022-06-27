@@ -165,3 +165,4 @@ notebooks/explore_trip_statistics/runs/aurora-wind-2021-04-10--2021-06-30.parque
 notebooks/explore_trip_statistics/runs/tycho-brahe-wind-2021-04-10--2021-06-30.parquet.ipynb
 .ipython/profile_default/ipython_config.py
 .vscode/launch.json
+docs/ventrafiken/_build/*

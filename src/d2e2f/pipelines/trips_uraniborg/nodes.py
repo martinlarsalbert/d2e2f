@@ -82,7 +82,7 @@ def add_trip_columns(df: pd.DataFrame) -> pd.DataFrame:
     awa = np.deg2rad(df["awa"])
     df["aw_x"] = df["aw"] * np.cos(awa)  # Apparent wind in ship x-direction
     df["aw_y"] = df["aw"] * np.sin(awa)  # Apparent wind in ship y-direction
-    df["aw_x**2*sog"] = df["aw_x"] ** 2 * df["sog"]
+    df["aw_x**2*sog"] = df["aw_x"].abs() * df["aw_x"] * df["sog"]
     df["sog**3"] = df["sog"] ** 3
 
     if "drift_angle" in df:
