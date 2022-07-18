@@ -1,0 +1,11 @@
+sog: m/s
+cog: deg
+fuel_rate: m3/h
+longitude: deg
+latitude: deg
+distance: m
+consumption: m3
+time: s
+consumption per nautical mile: l/NM
+consumption per hour: l/h
+distance lat lon: m

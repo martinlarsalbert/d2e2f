@@ -18,7 +18,7 @@ def create_pipeline(**kwargs):
                 inputs=[
                     "data_with_trip_numbers",
                 ],
-                outputs="data_with_trip_columns",
+                outputs="data",
                 name="preprocess_trip_columns_node",
                 tags=["training", "inference"],
             ),

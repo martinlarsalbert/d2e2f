@@ -9,7 +9,7 @@ ssrs.raw_data:
   path: data/01_raw/sendaway
   filename_suffix: ".txt.gz"
 
-ssrs.data:
+ssrs.telematikenheter:
   type: PartitionedDataSet
   dataset:
     type: pandas.CSVDataSet
@@ -17,5 +17,138 @@ ssrs.data:
       index_col: 0
     save_args:
       index: True
+  path: data/02_intermediate/ssrs_telematikenheter
+  filename_suffix: ".csv"
+
+ssrs.data_descriptions:
+  type: PartitionedDataSet
+  dataset:
+    type: yaml.YAMLDataSet
+  path: data/02_intermediate/ssrs_telematikenheter
+  filename_suffix: ".yml"
+
+ssrs.data:
+  type: PartitionedDataSet
+  dataset:
+    type: pandas.CSVDataSet
+    load_args:
+      index_col: 0
+      infer_datetime_format: True
+      parse_dates:
+        - time
+    save_args:
+      index: True
   path: data/02_intermediate/ssrs
   filename_suffix: ".csv"
+
+ssrs.units:
+  type: PartitionedDataSet
+  dataset:
+    type: yaml.YAMLDataSet
+  path: data/02_intermediate/ssrs
+  filename_suffix: ".yml"
+
+ssrs.clean_data:
+  type: PartitionedDataSet
+  dataset:
+    type: pandas.CSVDataSet
+    load_args:
+      index_col: 0
+      infer_datetime_format: True
+      parse_dates:
+        - time
+    save_args:
+      index: True
+  path: data/03_primary/ssrs
+  filename_suffix: ".csv"
+
+ssrs.data_selected:
+  type: PartitionedDataSet
+  dataset:
+    type: pandas.CSVDataSet
+    load_args:
+      index_col: 0
+      infer_datetime_format: True
+      parse_dates:
+        - time
+    save_args:
+      index: True
+  path: data/04_feature/ssrs
+  filename_suffix: ".csv"
+
+ssrs.data_moving:
+  type: PartitionedDataSet
+  dataset:
+    type: pandas.CSVDataSet
+    load_args:
+      index_col: 0
+      infer_datetime_format: True
+      parse_dates:
+        - time
+    save_args:
+      index: True
+  path: data/04_feature/ssrs_moving
+  filename_suffix: ".csv"
+
+ssrs.data_running:
+  type: PartitionedDataSet
+  dataset:
+    type: pandas.CSVDataSet
+    load_args:
+      index_col: 0
+      infer_datetime_format: True
+      parse_dates:
+        - time
+    save_args:
+      index: True
+  path: data/04_feature/data_running
+  filename_suffix: ".csv"
+
+ssrs.statistics:
+  type: PartitionedDataSet
+  dataset:
+    type: yaml.YAMLDataSet
+  path: data/08_reporting/statistics
+  filename_suffix: ".yml"
+
+ssrs.statistics_moving:
+  type: PartitionedDataSet
+  dataset:
+    type: yaml.YAMLDataSet
+  path: data/08_reporting/statistics_moving
+  filename_suffix: ".yml"
+
+ssrs.statistics_running:
+  type: PartitionedDataSet
+  dataset:
+    type: yaml.YAMLDataSet
+  path: data/08_reporting/statistics_running
+  filename_suffix: ".yml"
+
+ssrs.units_statistics:
+  type: yaml.YAMLDataSet
+  filepath: data/08_reporting/units_statistics.yml
+
+ssrs.statistics_summary:
+  type: pandas.CSVDataSet
+  filepath: data/08_reporting/statistics_summary.csv
+  load_args:
+      index_col: 0
+  save_args:
+      index: True
+
+ssrs.statistics_moving_summary:
+  type: pandas.CSVDataSet
+  filepath: data/08_reporting/statistics_moving_summary.csv
+  load_args:
+      index_col: 0
+  save_args:
+      index: True
+
+ssrs.statistics_running_summary:
+  type: pandas.CSVDataSet
+  filepath: data/08_reporting/statistics_running_summary.csv
+  load_args:
+      index_col: 0
+  save_args:
+      index: True
