@@ -11,6 +11,8 @@ ssrs.excludes:
   - TOTALENGINEHOURS
   - EngineOilPressure
 
+ssrs.exclude_ships:
+  - SSRS15-04_322012068
 
 resample_period: 1 # [s] Period to resample all the measurements for syncing
 moving_min_speed: 0.05 # [m/s] Minimum speed that be considered as the ship is moving at all

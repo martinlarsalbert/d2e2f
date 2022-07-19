@@ -12,6 +12,8 @@ from .nodes import (
     speed_select,
     statistics,
     statistics_summary,
+    fit,
+    datasets_tain,
 )
 
 
@@ -26,6 +28,7 @@ def create_pipeline(**kwargs):
             ),
             node(
                 join_telematikenheter,
+                name="join_telematikenheter",
                 inputs=["telematikenheter", "params:resample_period"],
                 outputs="data",
                 tags=["join"],
@@ -92,6 +95,19 @@ def create_pipeline(**kwargs):
                 inputs=["statistics_running"],
                 outputs="statistics_running_summary",
                 tags=["summary", "statistics"],
+            ),
+            # Models
+            node(
+                datasets_tain,
+                inputs=["data_running", "params:exclude_ships"],
+                outputs="trains",
+                tags=["fit", "train"],
+            ),
+            node(
+                fit,
+                inputs=["trains"],
+                outputs="model_running",
+                tags=["fit", "train"],
             ),
         ]
     )

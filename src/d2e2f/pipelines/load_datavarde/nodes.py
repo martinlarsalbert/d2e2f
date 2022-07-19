@@ -9,10 +9,23 @@ from pathlib import Path
 import numpy as np
 import logging
 import scipy.integrate
+import sklearn
 
 log = logging.getLogger(__name__)
 
 import geopandas
+
+from sklearn.model_selection import GridSearchCV
+from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import f_regression
+from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+from sklearn.pipeline import Pipeline
+from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import RepeatedKFold
+from sklearn.linear_model import Ridge
+from sklearn.preprocessing import PolynomialFeatures, SplineTransformer
 
 
 def load(data: dict, excludes=[], limit=np.inf) -> pd.DataFrame:
@@ -149,6 +162,7 @@ def join_telematikenheter(telematikenheter: dict, resample_period: float) -> dic
         ship_loaders[ship][telematikenhet] = loader
 
     for ship, loaders in ship_loaders.items():
+        logger.info(f"ship: {ship}")
         data = {key: loader() for key, loader in loaders.items()}
         dataframes[ship] = data_to_frame(data, resample_period=resample_period)
 
@@ -159,13 +173,19 @@ def data_to_frame(data: dict, resample_period) -> pd.DataFrame:
 
     df = pd.DataFrame()
     for key, values in data.items():
-
+        logger.info(key)
         values.index = pd.to_datetime(values.index)
-        resample_values = (
-            values[~values.index.duplicated()]
-            .sort_index()
-            .resample(f"{resample_period}S")
-            .interpolate()  # Resampling an removing duplicates (why are there duplicates???)
+        # resample_values = (
+        #    values[~values.index.duplicated()]
+        #    .sort_index()
+        #    .resample(f"{resample_period}S")
+        #    .interpolate()  # Resampling an removing duplicates (why are there duplicates???)
+        # )
+        resample_values = _resample(
+            df=values[
+                ~values.index.duplicated()
+            ].sort_index(),  # Resampling an removing duplicates (why are there duplicates???)
+            resample_period=resample_period,
         )
 
         if len(df) == 0:
@@ -176,6 +196,41 @@ def data_to_frame(data: dict, resample_period) -> pd.DataFrame:
     df.index.name = "time"
 
     return df
+
+
+def _resample(df: pd.DataFrame, resample_period, max_time_gap="600S") -> pd.DataFrame:
+    """Group data when max_time_gap is exceeded and then resample.
+    This avoids that large time gaps are filled with interpolation.
+
+    Parameters
+    ----------
+    s : pd.Series
+        _description_
+    resample_period : _type_
+        _description_
+    max_time_gap : str, optional
+        _description_, by default "10S"
+
+    Returns
+    -------
+    pd.Series
+        _description_
+    """
+    mask = np.concatenate(([True], (df.index[1:] - df.index[0:-1]) > max_time_gap))
+    n_groups = mask.sum()
+    df.loc[mask, "group"] = np.arange(0, n_groups)
+    df["group"] = df["group"].ffill()
+    groups = []
+    for group, df_group in df.groupby(by=["group"], sort=False):
+        groups.append(
+            df_group.resample(f"{resample_period}S")
+            .interpolate()
+            .drop(columns=["group"])
+        )
+
+    df_resample = pd.concat(groups)
+
+    return df_resample
 
 
 def _quantile_clean(data: pd.DataFrame, columns: list = None, alpha=0.001):
@@ -295,6 +350,9 @@ def _select(data_clean: pd.DataFrame, descriptions: dict) -> pd.DataFrame:
     data_new["cog"] = data_new[cog_best].copy()
     data_new.drop(columns=speed_columns + cog_columns, inplace=True)
 
+    # Clean a bit more...
+    data_new = _quantile_clean(data_new, columns=["sog", "fuel_rate"])
+
     return data_new
 
 
@@ -371,14 +429,23 @@ def _statistics(
     return stats
 
 
-def _lat_lon_distance(df: pd.DataFrame):
+def _lat_lon_distance(df: pd.DataFrame, max_time_gap="10S"):
 
     data = geopandas.GeoDataFrame(
         df,
         geometry=geopandas.points_from_xy(df.longitude, df.latitude, crs="EPSG:4326"),
     )
     data = data.to_crs(epsg=3006)
-    return data.distance(data.shift()).sum()
+
+    mask = np.concatenate(([True], (data.index[1:] - data.index[0:-1]) > max_time_gap))
+    n_groups = mask.sum()
+    data.loc[mask, "group"] = np.arange(0, n_groups)
+    data["group"] = data["group"].ffill()
+    distance = 0.0
+    for group, df_group in data.groupby(by=["group"], sort=False):
+        distance += df_group.distance(df_group.shift()).sum()
+
+    return distance
 
 
 def statistics_summary(ship_statistics: dict) -> dict:
@@ -395,3 +462,74 @@ def statistics_summary(ship_statistics: dict) -> dict:
     statistics_summary.index.name = "ship"
 
     return statistics_summary
+
+
+def datasets_tain(data: dict, exclude_ships=[]) -> dict:
+
+    trains = {}
+    df_all = pd.DataFrame()
+
+    for ship, loader in data.items():
+
+        if ship in exclude_ships:
+            continue
+
+        trains[ship] = loader()
+        df = trains[ship].copy()
+        df["ship"] = ship
+        df["time"] = df.index
+        df_all = df_all.append(df, ignore_index=True)
+
+    trains["all"] = df_all
+
+    return trains
+
+
+def fit(trains: dict) -> dict:
+
+    models = {}
+    for ship, loader in trains.items():
+
+        try:
+            data = loader()  # From disk
+        except:
+            data = loader  # From memory
+
+        models[ship] = _fit(data=data)
+
+    return models
+
+
+def _fit(data: pd.DataFrame) -> sklearn.base.BaseEstimator:
+
+    y = data["fuel_rate"]
+    X = data[["sog"]].copy()
+
+    steps = [
+        ("transformer", SplineTransformer(n_knots=4, degree=3)),
+        ("estimator", Ridge(alpha=1e-3)),
+    ]
+
+    model = Pipeline(steps)
+
+    grid = dict()
+    grid["transformer__n_knots"] = [i for i in range(2, 5)]
+    grid["transformer__degree"] = [i for i in range(10)]
+    # perform the search
+
+    cv = RepeatedKFold(n_splits=3, n_repeats=5, random_state=1)
+
+    # define the grid search
+    search = GridSearchCV(
+        estimator=model,
+        param_grid=grid,
+        scoring="neg_mean_absolute_error",
+        n_jobs=-1,
+        cv=cv,
+    )
+
+    search_result = search.fit(X[["sog"]], y)
+    model = search_result.best_estimator_
+    model.fit(X[["sog"]], y)
+
+    return model

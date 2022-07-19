@@ -152,3 +152,10 @@ ssrs.statistics_running_summary:
       index_col: 0
   save_args:
       index: True
+
+ssrs.model_running:
+  type: PartitionedDataSet
+  dataset:
+    type: pickle.PickleDataSet
+  path: data/06_models/model_running
+  filename_suffix: ".pkl"

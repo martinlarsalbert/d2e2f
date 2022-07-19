@@ -1,19 +1,19 @@
 # Book settings
 # Learn more at https://jupyterbook.org/customize/config.html
 
-title: Energy saving Ventrafiken
+title: Energy saving SSRS
 author: D2E2F
 logo: logo.png
 
 # Force re-execution of notebooks on each build.
 # See https://github.com/martinlarsalbert/d2e2f
 execute:
-  execute_notebooks: force
+  execute_notebooks: cache
 
 # Define the name of the latex output file for PDF builds
 latex:
   latex_documents:
-    targetname:  Energy saving Ventrafiken.tex
+    targetname:  Energy saving SSRS.tex
 
 # Add a bibtex file so that we can create citations
 bibtex_bibfiles:

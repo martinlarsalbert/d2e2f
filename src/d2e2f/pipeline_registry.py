@@ -95,7 +95,10 @@ def register_pipelines() -> Dict[str, Pipeline]:
     load_datavarde_pipeline = pipeline(
         load_datavarde.create_pipeline(),
         namespace=namespace,
-        parameters={"params:excludes": f"params:{namespace}.excludes"},
+        parameters={
+            "params:excludes": f"params:{namespace}.excludes",
+            "params:exclude_ships": f"params:{namespace}.exclude_ships",
+        },
     )
 
     return {
