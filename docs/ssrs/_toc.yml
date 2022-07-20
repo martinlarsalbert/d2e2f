@@ -2,7 +2,9 @@
 # Learn more at https://jupyterbook.org/customize/toc.html
 
 format: jb-book
-root: 01.01_introduction
+root: index
 chapters:
+- file: 01.01_introduction
 - file: 02.01_method
 - file: 03.01_results
+- file: 04.01_conclusions
