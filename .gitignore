@@ -166,3 +166,4 @@ notebooks/explore_trip_statistics/runs/tycho-brahe-wind-2021-04-10--2021-06-30.p
 .ipython/profile_default/ipython_config.py
 .vscode/launch.json
 docs/ventrafiken/_build/*
+docs/ssrs/_build/*

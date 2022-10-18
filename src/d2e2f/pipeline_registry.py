@@ -89,7 +89,21 @@ def register_pipelines() -> Dict[str, Pipeline]:
         },
     )
 
-    the_pipeline = tycho + aurora + uraniborg
+    vitaskar = pipeline(
+        data_preprocessing.create_pipeline()
+        + trips_uraniborg.create_pipeline()
+        + trip_statistics.create_pipeline(),
+        namespace="vitaskar",
+        # Changing the minimum distance and time for Uraniborg:ked
+        parameters={
+            "params:min_distance": "params:vitaskar.min_distance",
+            "params:min_time": "params:vitaskar.min_time",
+            "params:max_time": "params:vitaskar.max_time",
+            "params:P_max": "params:vitaskar.P_max",
+        },
+    )
+
+    the_pipeline = tycho + aurora + uraniborg + vitaskar
 
     namespace = "ssrs"
     load_datavarde_pipeline = pipeline(
@@ -106,5 +120,6 @@ def register_pipelines() -> Dict[str, Pipeline]:
         "tycho": tycho,
         "aurora": aurora,
         "uraniborg": uraniborg,
+        "vitaskar": vitaskar,
         "load_ssrs": load_datavarde_pipeline,
     }
