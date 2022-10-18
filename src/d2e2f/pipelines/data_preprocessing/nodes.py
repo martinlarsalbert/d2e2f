@@ -14,6 +14,8 @@ def join_files(partitions: dict) -> pd.DataFrame:
 
         df = df.append(df_)
 
+    # df = pd.concat(dfs, axis=1)
+
     return df
 
 
@@ -118,6 +120,7 @@ def preprocess_trip_numbering(
     #    """
 
     df_raw.index = pd.to_datetime(df_raw.index)
+    df_raw = df_raw.loc[~df_raw.index.duplicated(keep="first")].copy()
     df_raw.sort_index(inplace=True)
 
     df_ = numbering(

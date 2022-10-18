@@ -65,24 +65,28 @@ def add_trip_columns(df: pd.DataFrame) -> pd.DataFrame:
     if "heading" in df:
         df["drift_angle"] = df["heading"] - df["cog"]
 
-    # (This is the only thing that makes sense)
-    df["awa"] += 180
+    if "awa" in df:
+        # (This is the only thing that makes sense)
+        df["awa"] += 180
 
-    # True wind:
-    aw = df["aw"]
-    awa = np.deg2rad(df["awa"])
-    sog = df["sog"]
-    df["w"] = apparent_wind.apparent_wind_to_true(sog=sog, aw=aw, awa=awa)
-    df["wa"] = np.mod(
-        np.rad2deg(apparent_wind.apparent_wind_angle_to_true(sog=sog, aw=aw, awa=awa)),
-        360,
-    )
+        # True wind:
+        aw = df["aw"]
+        awa = np.deg2rad(df["awa"])
+        sog = df["sog"]
+        df["w"] = apparent_wind.apparent_wind_to_true(sog=sog, aw=aw, awa=awa)
+        df["wa"] = np.mod(
+            np.rad2deg(
+                apparent_wind.apparent_wind_angle_to_true(sog=sog, aw=aw, awa=awa)
+            ),
+            360,
+        )
 
-    ## Derived quantities:
-    awa = np.deg2rad(df["awa"])
-    df["aw_x"] = df["aw"] * np.cos(awa)  # Apparent wind in ship x-direction
-    df["aw_y"] = df["aw"] * np.sin(awa)  # Apparent wind in ship y-direction
-    df["aw_x**2*sog"] = df["aw_x"].abs() * df["aw_x"] * df["sog"]
+        ## Derived quantities:
+        awa = np.deg2rad(df["awa"])
+        df["aw_x"] = df["aw"] * np.cos(awa)  # Apparent wind in ship x-direction
+        df["aw_y"] = df["aw"] * np.sin(awa)  # Apparent wind in ship y-direction
+        df["aw_x**2*sog"] = df["aw_x"].abs() * df["aw_x"] * df["sog"]
+
     df["sog**3"] = df["sog"] ** 3
 
     if "drift_angle" in df:
