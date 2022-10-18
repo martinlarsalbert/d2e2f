@@ -1,5 +1,5 @@
 vitaskar.P_max: None  # [kW]
 
-vitaskar.min_distance: 7500
-vitaskar.min_time: 1200
-vitaskar.max_time: 2500
+vitaskar.min_distance: 6000
+vitaskar.min_time: 800
+vitaskar.max_time: 1800
