@@ -41,6 +41,7 @@ from .pipelines import clean_thrusters_forsea as clean_thrusters_forsea
 from .pipelines import train_test as train_test
 from .pipelines import model_statistics as model_statistics
 from .pipelines import load_datavarde
+from .pipelines import load_vitskar
 
 # from d2e2f.pipelines import join_files as js
 
@@ -89,6 +90,15 @@ def register_pipelines() -> Dict[str, Pipeline]:
         },
     )
 
+    load_vitaskar_pipeline = pipeline(
+        load_vitskar.create_pipeline(),
+        namespace="vitaskar",
+        parameters={
+            "params:load_start": "params:vitaskar.load_start",
+            "params:load_end": "params:vitaskar.load_end",
+        },
+    )
+
     vitaskar = pipeline(
         data_preprocessing.create_pipeline()
         + trips_uraniborg.create_pipeline()
@@ -122,4 +132,5 @@ def register_pipelines() -> Dict[str, Pipeline]:
         "uraniborg": uraniborg,
         "vitaskar": vitaskar,
         "load_ssrs": load_datavarde_pipeline,
+        "load_vitaskar": load_vitaskar_pipeline,
     }
