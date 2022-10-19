@@ -10,6 +10,12 @@ def statistics(df: pd.DataFrame) -> pd.DataFrame:
     return df_stat
 
 
+def mean_angle_deg(angle: pd.Series):
+    dx_mean = np.cos(np.deg2rad(angle).mean())
+    dy_mean = np.sin(np.deg2rad(angle).mean())
+    return np.mod(np.rad2deg(np.arctan2(dy_mean, dx_mean)), 360)
+
+
 def trip_statistics(trip: pd.DataFrame) -> pd.Series:
 
     assert isinstance(trip, pd.DataFrame)
@@ -27,6 +33,11 @@ def trip_statistics(trip: pd.DataFrame) -> pd.Series:
     integrated = integrate_time(trip=trip)
     trip.drop(columns="time", inplace=True)
     df_statistics = trip.mean()
+
+    # Special treatment for courses:
+    df_statistics["cog"] = mean_angle_deg(trip["cog"])
+    if "heading" in trip:
+        df_statistics["heading"] = mean_angle_deg(trip["heading"])
 
     df_statistics["start_time"] = str(start_time)
     df_statistics["end_time"] = str(end_time)

@@ -10,14 +10,17 @@ generated using Kedro 0.17.6
 import pandas as pd
 import numpy as np
 from d2e2f import apparent_wind
+from d2e2f.pipelines.trip_statistics.trip_statistics import mean_angle_deg
 
 
-def preprocess_trip_columns(df: pd.DataFrame) -> pd.DataFrame:
-    df = add_trip_columns(df=df)
+def preprocess_trip_columns(
+    df: pd.DataFrame, harbours: list = ["harbour 1", " harbour 2"]
+) -> pd.DataFrame:
+    df = add_trip_columns(df=df, harbours=harbours)
     return df
 
 
-def add_trip_columns(df: pd.DataFrame) -> pd.DataFrame:
+def add_trip_columns(df: pd.DataFrame, harbours: list) -> pd.DataFrame:
     """Add trip columns
 
     Adding columns:
@@ -44,8 +47,18 @@ def add_trip_columns(df: pd.DataFrame) -> pd.DataFrame:
     trip_time = trips["trip_no"].transform(lambda x: x.index - x.index[0])
     df["trip_time"] = pd.TimedeltaIndex(trip_time).total_seconds()
 
-    df["trip_direction"] = trips["longitude"].transform(
-        lambda x: "Ven-Landskrona" if (x[0] < x.quantile(0.10)) else "Landskrona-Ven"
+    # df["trip_direction"] = trips["longitude"].transform(
+    #    lambda x: "Ven-Landskrona" if (x[0] < x.quantile(0.10)) else "Landskrona-Ven"
+    # )
+
+    dx_limit = np.cos(np.deg2rad(df["cog"]).quantile(0.5))
+    dy_limit = np.sin(np.deg2rad(df["cog"]).quantile(0.5))
+    cog_limit = np.mod(np.rad2deg(np.arctan2(dy_limit, dx_limit)), 360)
+
+    df["trip_direction"] = trips["cog"].transform(
+        lambda x: f"{harbours[0]}-{harbours[1]}"
+        if (mean_angle_deg(x) < cog_limit)
+        else f"{harbours[1]}-{harbours[0]}"
     )
 
     df["thrust_factor"] = np.where(

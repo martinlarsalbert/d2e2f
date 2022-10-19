@@ -17,6 +17,7 @@ def create_pipeline(**kwargs):
                 func=preprocess_trip_columns,
                 inputs=[
                     "data_with_trip_numbers",
+                    "params:harbours",
                 ],
                 outputs="data_with_trip_columns",
                 name="preprocess_trip_columns_node",

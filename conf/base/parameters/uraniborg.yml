@@ -1,1 +1,5 @@
 uraniborg.P_max: 1397  # [kW]
+
+uraniborg.harbours:
+  - Landskrona 
+  - Ven
