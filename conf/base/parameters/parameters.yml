@@ -50,6 +50,7 @@ do_calculate_rudder_angles: False
 ## preprocess_trip_numbering
 start_number: 0
 trip_separator: 0 days 00:00:20
+max_time_diff: 300
 
 ## Clean statistics:
 min_distance: 4000

@@ -3,8 +3,8 @@ from .trip_statistics import statistics
 from .clean_statistics import clean
 
 
-def preprocess_trip_statistics(df: pd.DataFrame) -> pd.DataFrame:
-    df_statistics = statistics(df=df)
+def preprocess_trip_statistics(df: pd.DataFrame, max_time_diff=300) -> pd.DataFrame:
+    df_statistics = statistics(df=df, max_time_diff=max_time_diff)
     return df_statistics
 
 

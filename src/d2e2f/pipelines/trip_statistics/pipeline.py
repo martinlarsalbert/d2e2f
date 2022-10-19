@@ -13,6 +13,7 @@ def create_pipeline(**kwargs):
                 func=preprocess_trip_statistics,
                 inputs=[
                     "data_with_trip_columns",
+                    "params:max_time_diff",
                 ],
                 outputs="trip_statistics",
                 name="preprocess_trip_statistics_node",

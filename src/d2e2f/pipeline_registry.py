@@ -112,6 +112,8 @@ def register_pipelines() -> Dict[str, Pipeline]:
             "params:max_time": "params:vitaskar.max_time",
             "params:P_max": "params:vitaskar.P_max",
             "params:harbours": "params:vitaskar.harbours",
+            "params:min_speed": "params:vitaskar.min_speed",
+            "params:max_time_diff": "params:vitaskar.max_time_diff",
         },
     )
 

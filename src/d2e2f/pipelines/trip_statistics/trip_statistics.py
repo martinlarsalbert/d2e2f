@@ -3,9 +3,30 @@ import scipy.integrate
 import numpy as np
 
 
-def statistics(df: pd.DataFrame) -> pd.DataFrame:
+def statistics(df: pd.DataFrame, max_time_diff=300) -> pd.DataFrame:
+    """Calculate statistics for all the trips
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        _description_
+    max_time_diff : int, optional
+        Trips with missing data more than max_time_diff [s] are excluded, by default 60
+
+    Returns
+    -------
+    pd.DataFrame
+        _description_
+    """
+    df["time"] = (df.index - df.index[0]).total_seconds()
     trips = df.groupby(by="trip_no")
+
+    # Removing trips with too much time gaps:
+    df = trips.filter(lambda x: x["time"].diff().max() <= max_time_diff)
+    trips = df.groupby(by="trip_no")
+
     df_stat = trips.apply(func=trip_statistics)
+
     df_stat.index.name = "trip_no"
     return df_stat
 

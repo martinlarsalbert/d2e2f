@@ -7,6 +7,9 @@ vitaskar.max_time: 1800
 vitaskar.load_start: 2022-01-01
 vitaskar.load_end: 2022-10-18
 
+vitaskar.min_speed: 0.4
+vitaskar.max_time_diff: 15
+
 vitaskar.harbours:
   Norgersund:
     - 56.005013
