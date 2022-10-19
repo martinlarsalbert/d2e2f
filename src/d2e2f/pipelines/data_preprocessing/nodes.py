@@ -113,6 +113,7 @@ def preprocess(
 def preprocess_trip_numbering(
     df_raw: pd.DataFrame,
     start_number: int,
+    harbours: dict,
     trip_separator="0 days 00:00:20",
     initial_speed_separator=0.05,
 ) -> pd.DataFrame:
@@ -128,6 +129,7 @@ def preprocess_trip_numbering(
         start_number=start_number,
         trip_separator=trip_separator,
         initial_speed_separator=initial_speed_separator,
+        harbours=harbours,
     )
 
     return df_

@@ -5,6 +5,7 @@ import numpy as np
 def numbering(
     df: pd.DataFrame,
     start_number: int,
+    harbours: dict,
     trip_separator="0 days 00:00:20",
     initial_speed_separator=0.05,
 ) -> pd.DataFrame:

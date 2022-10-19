@@ -48,6 +48,7 @@ def create_pipeline(**kwargs):
                 inputs=[
                     "preprocessed_data",
                     "params:start_number",
+                    "params:harbours",
                     "params:trip_separator",
                     "params:initial_speed_separator",
                 ],

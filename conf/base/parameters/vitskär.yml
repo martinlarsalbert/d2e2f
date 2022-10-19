@@ -8,5 +8,9 @@ vitaskar.load_start: 2022-01-01
 vitaskar.load_end: 2022-10-18
 
 vitaskar.harbours:
-  - Norgersund 
-  - Hanö
+  Norgersund:
+    - 56.005013
+    - 14.737086
+  Hanö: 
+    - 56.009692
+    - 14.835940

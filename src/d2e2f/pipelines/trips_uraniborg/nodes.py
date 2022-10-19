@@ -54,11 +54,12 @@ def add_trip_columns(df: pd.DataFrame, harbours: list) -> pd.DataFrame:
     dx_limit = np.cos(np.deg2rad(df["cog"]).quantile(0.5))
     dy_limit = np.sin(np.deg2rad(df["cog"]).quantile(0.5))
     cog_limit = np.mod(np.rad2deg(np.arctan2(dy_limit, dx_limit)), 360)
-
+    harbour1 = list(harbours.keys())[0]
+    harbour2 = list(harbours.keys())[1]
     df["trip_direction"] = trips["cog"].transform(
-        lambda x: f"{harbours[0]}-{harbours[1]}"
+        lambda x: f"{harbour1}-{harbour2}"
         if (mean_angle_deg(x) < cog_limit)
-        else f"{harbours[1]}-{harbours[0]}"
+        else f"{harbour2}-{harbour1}"
     )
 
     df["thrust_factor"] = np.where(
