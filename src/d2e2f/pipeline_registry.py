@@ -88,6 +88,8 @@ def register_pipelines() -> Dict[str, Pipeline]:
             "params:max_time": "params:max_time_uraniborg",
             "params:P_max": "params:uraniborg.P_max",
             "params:harbours": "params:uraniborg.harbours",
+            "params:min_start_speed": "params:uraniborg.min_start_speed",
+            "params:max_time_diff": "params:uraniborg.max_time_diff",
         },
     )
 
@@ -112,7 +114,7 @@ def register_pipelines() -> Dict[str, Pipeline]:
             "params:max_time": "params:vitaskar.max_time",
             "params:P_max": "params:vitaskar.P_max",
             "params:harbours": "params:vitaskar.harbours",
-            "params:min_speed": "params:vitaskar.min_speed",
+            "params:min_start_speed": "params:vitaskar.min_start_speed",
             "params:max_time_diff": "params:vitaskar.max_time_diff",
         },
     )

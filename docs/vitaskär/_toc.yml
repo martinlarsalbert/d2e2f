@@ -4,5 +4,5 @@
 format: jb-book
 root: intro
 chapters:
-- file: 07.04_uraniborg_savings
+- file: 07.04_vitaskär_savings
 - file: summary

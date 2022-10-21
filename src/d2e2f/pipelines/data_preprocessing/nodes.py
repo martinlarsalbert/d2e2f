@@ -2,7 +2,7 @@ import pandas as pd
 from kedro.io import PartitionedDataSet
 
 from .prepare import prepare
-from .trips import numbering
+import numpy as np
 
 
 def join_files(partitions: dict) -> pd.DataFrame:
@@ -51,32 +51,9 @@ def slice(df_raw: pd.DataFrame, row_start=0, row_end=-1) -> pd.DataFrame:
     return df_raw.iloc[row_start:row_end]
 
 
-# def preprocess(
-#    loaded: PartitionedDataSet,
-#    renames: dict,
-#    do_calculate_rudder_angles=False,
-#    min_speed=0.01,
-# ) -> PartitionedDataSet:
-#    partitions = {}
-#    for partition_id, df in loaded.items():
-#        # df = partition_load_func()
-#        try:
-#            partitions[partition_id] = _preprocess(
-#                df_raw=df,
-#                renames=renames,
-#                do_calculate_rudder_angles=do_calculate_rudder_angles,
-#                min_speed=min_speed,
-#            )
-#        except Exception:
-#            raise ValueError(f" failed on partition_id:{partition_id}")
-#
-#    return partitions
-
-
 def preprocess(
     df_raw: pd.DataFrame,
     renames: dict,
-    min_speed=0.01,
     P_max: float = None,
     do_calculate_rudder_angles=False,
 ) -> pd.DataFrame:
@@ -85,51 +62,111 @@ def preprocess(
         P_max=P_max,
         do_calculate_rudder_angles=do_calculate_rudder_angles,
         renames=renames,
-        min_speed=min_speed,
     )
 
     return df_
 
 
-# def preprocess_trip_numbering(
-#    loaded: PartitionedDataSet,
-#    start_number: int,
-#    trip_separator="0 days 00:00:20",
-#    initial_speed_separator=0.05,
-# ) -> PartitionedDataSet:
-#    partitions = {}
-#    for partition_id, partition_load_func in loaded.items():
-#        df = partition_load_func()
-#        partitions[partition_id] = _preprocess_trip_numbering(
-#            df_raw=df,
-#            start_number=start_number,
-#            trip_separator=trip_separator,
-#            initial_speed_separator=initial_speed_separator,
-#        )
-#
-#    return partitions
-
-
-def preprocess_trip_numbering(
-    df_raw: pd.DataFrame,
-    start_number: int,
-    harbours: dict,
-    trip_separator="0 days 00:00:20",
-    initial_speed_separator=0.05,
+def numbering(
+    df: pd.DataFrame,
+    start_number: int = 0,
 ) -> pd.DataFrame:
-    #    """Preprocesses the data adding trip numbers.
-    #    """
+    """Give trip numbers based on start and end in the state column
 
-    df_raw.index = pd.to_datetime(df_raw.index)
-    df_raw = df_raw.loc[~df_raw.index.duplicated(keep="first")].copy()
-    df_raw.sort_index(inplace=True)
+    Parameters
+    ----------
+    df : pd.DataFrame
+        _description_
+    start_number : int, optional
+        number of first trip, by default 0
 
-    df_ = numbering(
-        df=df_raw,
-        start_number=start_number,
-        trip_separator=trip_separator,
-        initial_speed_separator=initial_speed_separator,
-        harbours=harbours,
+    Returns
+    -------
+    pd.DataFrame
+        trip_no column added
+    """
+
+    mask = df["state"] == "start"
+    starts = df.loc[mask]
+    mask = df["state"] == "end"
+    ends = df.loc[mask]
+
+    # Dropping if initial end
+    if ends.index[0] < starts.index[0]:
+        ends.drop(index=ends.iloc[0].name, inplace=True)
+
+    # Dropping if final start
+    if ends.index[-1] < starts.index[-1]:
+        starts.drop(index=starts.iloc[-1].name, inplace=True)
+
+    # Give a trip number for each start and fill for all time steps:
+    mask = df["state"] == "start"
+    starts = df.loc[mask]
+
+    start_number = 0
+    end_number = start_number + 1 + len(starts)
+    trip_numbers = np.arange(start_number + 1, end_number, dtype=int)
+
+    df.loc[starts.index, "trip_no"] = trip_numbers
+    df["trip_no"] = df["trip_no"].fillna(method="ffill")
+    df["trip_no"] = df["trip_no"].fillna(start_number)
+    df["trip_no"] = df["trip_no"].astype(int)
+
+    return df
+
+
+def find_trips(
+    df: pd.DataFrame,
+    min_time=800,
+    min_start_speed=0.1,
+) -> pd.DataFrame:
+    """Find start and end of trips by analysing the speed signal
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        _description_
+    min_time : str, optional
+        Minimum trip time to dissregard false trips, by default "800S"
+    min_start_speed : float, optional
+        Minimum speed to start a trip, by default 0.1
+
+    Returns
+    -------
+    pd.DataFrame
+        dataframe with start and end events into the state column.
+
+    """
+
+    if isinstance(min_time, int):
+        min_time = f"{min_time}S"
+
+    # Find possible starts of trips:
+    sog = df["sog"]
+    mask_start = (sog < min_start_speed) & (np.roll(sog, -1) >= min_start_speed)
+    df.loc[mask_start, "state"] = "start"
+
+    # Remove false starts:
+    mask = df["state"].isin(["start"])
+    df["time"] = df.index
+    events = df.loc[mask]
+    mask = events["time"].diff() < min_time
+    df.loc[events.loc[mask].index, "state"] = np.NaN
+
+    # Calculate trip time for all trips
+    mask = df["state"] == "start"
+    df.loc[mask, "zero time"] = df.loc[mask, "time"]
+    df["zero time"] = df["zero time"].fillna(method="ffill")
+    df["trip time"] = df["time"] - df["zero time"]
+
+    # Find end of trips:
+    mask_end = (
+        (np.roll(sog, 1) >= min_start_speed)
+        & (sog < min_start_speed)
+        & (df["trip time"] > min_time)
     )
+    df.loc[mask_end, "state"] = "end"
 
-    return df_
+    df.drop(columns=["zero time", "trip time"], inplace=True)
+
+    return df

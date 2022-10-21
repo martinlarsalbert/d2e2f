@@ -1,13 +1,13 @@
 vitaskar.P_max: None  # [kW]
 
 vitaskar.min_distance: 6000
-vitaskar.min_time: 800
-vitaskar.max_time: 1800
+vitaskar.min_time: 800  # Minimum trip time
+vitaskar.max_time: 1800 # Maximum trip time
+vitaskar.min_start_speed: 0.1
 
 vitaskar.load_start: 2022-01-01
 vitaskar.load_end: 2022-10-18
 
-vitaskar.min_speed: 0.4
 vitaskar.max_time_diff: 15
 
 vitaskar.harbours:

@@ -1,7 +1,7 @@
 # Book settings
 # Learn more at https://jupyterbook.org/customize/config.html
 
-title: Energy saving Ventrafiken
+title: Energy saving Vitaskär
 author: D2E2F
 logo: logo.png
 
@@ -13,7 +13,8 @@ execute:
 # Define the name of the latex output file for PDF builds
 latex:
   latex_documents:
-    targetname:  Energy saving Ventrafiken.tex
+    targetname:  vitaskär.tex
+  latex_engine: xelatex
 
 # Add a bibtex file so that we can create citations
 bibtex_bibfiles:

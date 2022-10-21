@@ -4,7 +4,8 @@ from .nodes import (
     join_files,
     slice,
     preprocess,
-    preprocess_trip_numbering,
+    numbering,
+    find_trips,
 )
 
 
@@ -36,24 +37,30 @@ def create_pipeline(**kwargs):
                 inputs=[
                     "raw_data_slice",
                     "params:renames",
-                    "params:min_speed",
                     "params:P_max",
                 ],
-                outputs="preprocessed_data",
+                outputs="data_prepared",
                 name="preprocess_node",
                 tags=["training", "inference"],
             ),
             node(
-                func=preprocess_trip_numbering,
+                func=find_trips,
                 inputs=[
-                    "preprocessed_data",
-                    "params:start_number",
-                    "params:harbours",
-                    "params:trip_separator",
-                    "params:initial_speed_separator",
+                    "data_prepared",
+                    "params:min_time",
+                    "params:min_start_speed",
                 ],
-                outputs="data_with_trip_numbers",
-                name="preprocess_trip_numbering_node",
+                outputs="data_start_end",
+                name="find_trips",
+                tags=["training", "inference"],
+            ),
+            node(
+                func=numbering,
+                inputs=[
+                    "data_start_end",
+                ],
+                outputs="preprocessed_data",
+                name="numbering_node",
                 tags=["training", "inference"],
             ),
         ]

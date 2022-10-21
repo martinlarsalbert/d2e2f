@@ -7,7 +7,6 @@ def prepare(
     df_raw: pd.DataFrame,
     P_max: float = None,
     do_calculate_rudder_angles=False,
-    min_speed=0.01,
     renames={},
 ):
     # df_raw = dataset.take(n_rows).to_pandas_dataframe()
@@ -47,13 +46,15 @@ def prepare(
 
     df.set_index("time", inplace=True)
     df.index = pd.to_datetime(df.index)
+    mask = df.index.duplicated(keep="first")
+    df = df.loc[~mask].copy()
     df.sort_index(inplace=True)
     df.index.name = "time"
 
     df["sog"] *= 1.852 / 3.6
 
-    mask = df["sog"] > min_speed
-    df = df.loc[mask].copy()
+    # mask = df["sog"] > min_speed
+    # df = df.loc[mask].copy()
 
     if do_calculate_rudder_angles:
         if "delta1" in df:
