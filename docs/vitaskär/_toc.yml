@@ -4,5 +4,6 @@
 format: jb-book
 root: intro
 chapters:
+- file: 02.01_method
 - file: 07.04_vitaskär_savings
 - file: summary
