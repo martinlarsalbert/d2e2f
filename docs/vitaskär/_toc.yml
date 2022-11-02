@@ -2,8 +2,9 @@
 # Learn more at https://jupyterbook.org/customize/toc.html
 
 format: jb-book
-root: intro
+root: 01.01_introduction
 chapters:
 - file: 02.01_method
-- file: 07.04_vitaskär_savings
+- file: 02.10_data
+- file: 03.01_results
 - file: summary

@@ -1,7 +1,7 @@
 # Book settings
 # Learn more at https://jupyterbook.org/customize/config.html
 
-title: Energy saving Vitaskär
+title: Energy efficiency Vitaskär
 author: D2E2F
 logo: logo.png
 
@@ -35,3 +35,7 @@ html:
 sphinx:
   extra_extensions:
     - sphinx_proof
+    - sphinx_jupyterbook_latex
+  config:
+    latex_elements:
+      preamble: \usepackage{lmodern}          % better font
