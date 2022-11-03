@@ -13,7 +13,7 @@ execute:
 # Define the name of the latex output file for PDF builds
 latex:
   latex_documents:
-    targetname:  vitaskär.tex
+    targetname:  vitaskar.tex
   latex_engine: xelatex
 
 # Add a bibtex file so that we can create citations
@@ -34,8 +34,17 @@ html:
 
 sphinx:
   extra_extensions:
-    - sphinx_proof
-    - sphinx_jupyterbook_latex
+    #- sphinx_jupyterbook_latex
   config:
     latex_elements:
-      preamble: \usepackage{lmodern}          % better font
+      fontpkg: \usepackage{lmodern}          % better font
+      pointsize: 12pt
+      extrapackages: \usepackage{placeins}     % for FloatBarrier 
+
+  nb_mime_priority_overrides:
+    - - latex
+      - "image/svg+xml"
+      - 15
+    - - latex
+      - "image/pdf"
+      - 16
