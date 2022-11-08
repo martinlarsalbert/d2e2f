@@ -2,10 +2,16 @@ uraniborg.P_max: 1397  # [kW]
 
 uraniborg.harbours:
   Ven:
-    - 55.90373778958733, 12.722514705572287
+    - 55.90373778958733
+    - 12.722514705572287
   Landskrona:
-    - 55.86580227413789, 12.824635937656444
+    - 55.86580227413789
+    - 12.824635937656444
 
-uraniborg.max_time_diff: 15
+uraniborg.min_distance: 7000
+uraniborg.min_time: 600  # Minimum trip time
+uraniborg.max_time: 18000 # Maximum trip time
 uraniborg.min_start_speed: 0.1
+uraniborg.max_time_diff: 60
+
   

@@ -59,7 +59,7 @@ def create_pipeline(**kwargs):
                 inputs=[
                     "data_start_end",
                 ],
-                outputs="preprocessed_data",
+                outputs="data_with_trip_numbers",
                 name="numbering_node",
                 tags=["training", "inference"],
             ),

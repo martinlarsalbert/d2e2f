@@ -8,6 +8,7 @@ def prepare(
     P_max: float = None,
     do_calculate_rudder_angles=False,
     renames={},
+    drop_columns_when_NaN=["sog"],
 ):
     # df_raw = dataset.take(n_rows).to_pandas_dataframe()
 
@@ -70,6 +71,10 @@ def prepare(
             df = calculate_rudder_angles(df=df, drop=False)
 
     df.dropna(how="all", inplace=True, axis=1)  # remove columns with all NaN
+
+    # drop_columns_when_NaN:
+    mask = df[drop_columns_when_NaN + consumption_columns].notnull().all(axis=1)
+    df = df.loc[mask].copy()
 
     return df
 
