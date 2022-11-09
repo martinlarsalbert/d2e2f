@@ -57,9 +57,9 @@ min_distance: 4000
 min_time: 700
 max_time: 1400
 
-min_distance_uraniborg: 7500
-min_time_uraniborg: 1200
-max_time_uraniborg: 2500
+#min_distance_uraniborg: 7500
+#min_time_uraniborg: 1200
+#max_time_uraniborg: 2500
 
 ## clean_thrusters_node
 P_max_ratio_diff: 0.3

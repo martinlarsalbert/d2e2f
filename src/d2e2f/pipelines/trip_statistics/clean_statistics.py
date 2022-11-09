@@ -2,7 +2,11 @@ import pandas as pd
 
 
 def clean(
-    df_stat: pd.DataFrame, min_distance=4000, min_time=700, max_time=1400
+    df_stat: pd.DataFrame,
+    min_distance=4000,
+    max_distance=8000,
+    min_time=700,
+    max_time=1400,
 ) -> pd.DataFrame:
     """Clean the statistics, removing outliers with unrealistic trip times.
 
@@ -13,9 +17,7 @@ def clean(
         pd.DataFrame: [description]
     """
 
-    mask = (df_stat["distance"] > min_distance) & (
-        df_stat["distance"] < df_stat["distance"].quantile(0.99)
-    )
+    mask = (df_stat["distance"] > min_distance) & (df_stat["distance"] < max_distance)
     df_cleaned = df_stat.loc[mask].copy()
 
     mask = (df_cleaned["trip_time"] > min_time) & (df_cleaned["trip_time"] < max_time)

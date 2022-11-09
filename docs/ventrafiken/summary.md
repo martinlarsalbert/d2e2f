@@ -1,6 +1,14 @@
-# Summary
-Analysing the difference between pair trips between Aurora and Tycho Brahe estimates that there is an energy saving potential of at least 7%. This assumes that components from the *Loading condition*, *Environment* and the *Energy efficiency of the ships* is constant for the short time window in the pair trips. It has been confirmed that the measured mean wind speed differs less than {glue:}`w_max_diff` m/s between Aurora and Tycho Brahe in the investigated trip pairs. The other assumptions about the environmental conditions are harder to confirm, but it seems very unlikely that the current or waves can change within the short time window. The assumption about constant loading condition is also hard to confirm, as there was no data available on the number of trains, trucks and cars that was loaded on each trip, but it seems reasonable that the traffic flow is constant over a short time window. 
+(discussion)=
+# Discussion
+Crew training was conducted 2021-05-11. The fuel consumption of Uraniborg for trips between Landskrona and Ven have been analyzed for three periods: 
 
-The energy saving potential from the analysis of pair trips further assumes that the one of the ships which has the smallest energy consumption has the optimal operation, which is probably not true. The real optimum has even smaller energy consumption, so that the value of 7% energy saving should be regarded as a modest estimation. It should be possible to save even more than the estimated 7% if the operation of these ships is further optimized.
+* black screens : measurements with no screen giving feedback to crew
+* lit screens : a screen is giving feedback to crew
+* training : crew training in eco driving 
 
-It has also been found that the ship speed is the single most important factor to the energy consumption. Trips with high energy consumption also have a high mean ship speed, so that the more optimal ship in the pairs also has the lower ship speed. The estimated energy saving potential assumes that the other ship in the pair can also have a lower ship speed by avoiding delayed departure, early arrival or detours along the trip.
+The fuel consumption was 2% lower with lit screens compared to the reference period with black screens. The fuel consumption was 5% lower after training compared to black screens.
+The average speed over ground (sog) was reduced 1% and 2 % during these periods at maintained trip time and distance. The reduced average speed is explained by changed speed profile during the trips as seen in {numref}`fig:mean_speed`. The top speed is lower but maintained for a longer time for lit screens and after training compared to black screens. This gives a lower average speed and fuel consumption. The differences are more pronounced in the Ven to Landskrona direction.
+
+(conclusion)=
+# Conclusion
+Both feedback from the screens and training in eco driving reduced the fuel consumption. The largest reduction was achieved after the training.

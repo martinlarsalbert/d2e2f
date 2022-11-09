@@ -1,7 +1,8 @@
 vitaskar.P_max: None  # [kW]
 
 vitaskar.min_distance: 6000
-vitaskar.min_time: 800  # Minimum trip time
+vitaskar.max_distance: 8000
+vitaskar.min_time: 1100  # Minimum trip time
 vitaskar.max_time: 1800 # Maximum trip time
 vitaskar.min_start_speed: 0.1
 

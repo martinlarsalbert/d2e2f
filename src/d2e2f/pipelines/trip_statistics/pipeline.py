@@ -24,6 +24,7 @@ def create_pipeline(**kwargs):
                 inputs=[
                     "trip_statistics",
                     "params:min_distance",
+                    "params:max_distance",
                     "params:min_time",
                     "params:max_time",
                 ],

@@ -100,16 +100,21 @@ def numbering(
         starts.drop(index=starts.iloc[-1].name, inplace=True)
 
     # Give a trip number for each start and fill for all time steps:
-    mask = df["state"] == "start"
-    starts = df.loc[mask]
 
     start_number = 0
     end_number = start_number + 1 + len(starts)
     trip_numbers = np.arange(start_number + 1, end_number, dtype=int)
 
     df.loc[starts.index, "trip_no"] = trip_numbers
-    df["trip_no"] = df["trip_no"].fillna(method="ffill")
-    df["trip_no"] = df["trip_no"].fillna(start_number)
+    df.loc[ends.index, "trip_no"] = -1  # Mark ends with -1
+
+    # Front fill from each trip_no (or -1):
+    df["trip_no"].fillna(method="ffill", inplace=True)
+
+    # Remove initial or end points that do not belong to a trip:
+    mask = df["trip_no"].notnull()
+    df = df.loc[mask].copy()
+
     df["trip_no"] = df["trip_no"].astype(int)
 
     return df
@@ -138,35 +143,74 @@ def find_trips(
 
     """
 
-    if isinstance(min_time, int):
-        min_time = f"{min_time}S"
+    upcrossings = get_upcrossings(df, min_start_speed=min_start_speed)
+    downcrossings = get_downcrossings(df, min_start_speed=min_start_speed)
 
-    # Find possible starts of trips:
-    sog = df["sog"]
-    mask_start = (sog < min_start_speed) & (np.roll(sog, -1) >= min_start_speed)
-    df.loc[mask_start, "state"] = "start"
-
-    # Remove false starts:
-    mask = df["state"].isin(["start"])
-    df["time"] = df.index
-    events = df.loc[mask]
-    mask = events["time"].diff() < min_time
-    df.loc[events.loc[mask].index, "state"] = np.NaN
-
-    # Calculate trip time for all trips
-    mask = df["state"] == "start"
-    df.loc[mask, "zero time"] = df.loc[mask, "time"]
-    df["zero time"] = df["zero time"].fillna(method="ffill")
-    df["trip time"] = df["time"] - df["zero time"]
-
-    # Find end of trips:
-    mask_end = (
-        (np.roll(sog, 1) >= min_start_speed)
-        & (sog < min_start_speed)
-        & (df["trip time"] > min_time)
+    upcrossings_correct_order, downcrossings_correct_order = correct_the_order(
+        upcrossings=upcrossings, downcrossings=downcrossings
     )
-    df.loc[mask_end, "state"] = "end"
 
-    df.drop(columns=["zero time", "trip time"], inplace=True)
+    upcrossings_ok, downcrossings_ok = filter_with_trip_duration(
+        upcrossings_correct_order=upcrossings_correct_order,
+        downcrossings_correct_order=downcrossings_correct_order,
+        min_time=min_time,
+    )
+
+    df.loc[upcrossings_ok.index, "state"] = "start"
+    df.loc[downcrossings_ok.index, "state"] = "end"
 
     return df
+
+
+def get_upcrossings(df: pd.DataFrame, min_start_speed: int) -> pd.DataFrame:
+    sog = df["sog"]
+    mask_upcross = (
+        (np.roll(sog, 1) < min_start_speed)
+        & (sog < min_start_speed)
+        & (np.roll(sog, -1) >= min_start_speed)
+    )
+    upcrossings = df.loc[mask_upcross]
+    return upcrossings
+
+
+def get_downcrossings(df: pd.DataFrame, min_start_speed: int) -> pd.DataFrame:
+    sog = df["sog"]
+    mask_downcross = (
+        (np.roll(sog, 1) >= min_start_speed)
+        & (sog < min_start_speed)
+        & (np.roll(sog, -1) < min_start_speed)
+    )
+    downcrossings = df.loc[mask_downcross]
+    return downcrossings
+
+
+def correct_the_order(upcrossings: pd.DataFrame, downcrossings: pd.DataFrame):
+    mask = upcrossings.index[0] < downcrossings.index
+    downcrossings_correct_order = downcrossings.loc[mask]
+
+    mask = downcrossings.index[-1] > upcrossings.index
+    upcrossings_correct_order = upcrossings.loc[mask]
+
+    assert len(downcrossings_correct_order) == len(upcrossings_correct_order)
+    assert (
+        len(
+            set(downcrossings_correct_order.index)
+            & set(upcrossings_correct_order.index)
+        )
+        == 0
+    )
+
+    return upcrossings_correct_order, downcrossings_correct_order
+
+
+def filter_with_trip_duration(
+    upcrossings_correct_order: pd.DataFrame,
+    downcrossings_correct_order: pd.DataFrame,
+    min_time: int,
+):
+    trip_durations = downcrossings_correct_order.index - upcrossings_correct_order.index
+    mask = trip_durations > f"{min_time}S"
+    upcrossings_ok = upcrossings_correct_order.loc[mask]
+    downcrossings_ok = downcrossings_correct_order.loc[mask]
+
+    return upcrossings_ok, downcrossings_ok

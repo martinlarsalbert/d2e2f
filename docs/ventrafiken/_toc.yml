@@ -4,8 +4,7 @@
 format: jb-article
 root: index
 sections:
-- file: 01.00_setup
-- file: 01.01_introduction
+- file: 01.02_introduction
 - file: 02.01_method
 - file: 02.10_data
 - file: 03.01_results

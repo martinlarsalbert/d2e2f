@@ -9,8 +9,9 @@ uraniborg.harbours:
     - 12.824635937656444
 
 uraniborg.min_distance: 7000
-uraniborg.min_time: 600  # Minimum trip time
-uraniborg.max_time: 18000 # Maximum trip time
+uraniborg.max_distance: 9000
+uraniborg.min_time: 1500  # Minimum trip time
+uraniborg.max_time: 3000 # Maximum trip time
 uraniborg.min_start_speed: 0.1
 uraniborg.max_time_diff: 60
 

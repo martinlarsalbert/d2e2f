@@ -83,9 +83,10 @@ def register_pipelines() -> Dict[str, Pipeline]:
         namespace="uraniborg",
         # Changing the minimum distance and time for Uraniborg:ked
         parameters={
-            "params:min_distance": "params:min_distance_uraniborg",
-            "params:min_time": "params:min_time_uraniborg",
-            "params:max_time": "params:max_time_uraniborg",
+            "params:min_distance": "params:uraniborg.min_distance",
+            "params:max_distance": "params:uraniborg.max_distance",
+            "params:min_time": "params:uraniborg.min_time",
+            "params:max_time": "params:uraniborg.max_time",
             "params:P_max": "params:uraniborg.P_max",
             "params:harbours": "params:uraniborg.harbours",
             "params:min_start_speed": "params:uraniborg.min_start_speed",
@@ -110,6 +111,7 @@ def register_pipelines() -> Dict[str, Pipeline]:
         # Changing the minimum distance and time for Uraniborg:ked
         parameters={
             "params:min_distance": "params:vitaskar.min_distance",
+            "params:max_distance": "params:vitaskar.max_distance",
             "params:min_time": "params:vitaskar.min_time",
             "params:max_time": "params:vitaskar.max_time",
             "params:P_max": "params:vitaskar.P_max",

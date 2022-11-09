@@ -42,6 +42,10 @@ def add_trip_columns(df: pd.DataFrame, harbours: list) -> pd.DataFrame:
         data with trip columns added/corrected
     """
 
+    # Remove points between trips:
+    mask = df["trip_no"] != -1  # Remove time between trips
+    df = df.loc[mask].copy()
+
     trips = df.groupby(by="trip_no")
 
     trip_time = trips["trip_no"].transform(lambda x: x.index - x.index[0])
