@@ -8,6 +8,4 @@ sections:
 - file: 02.01_method
 - file: 02.10_data
 - file: 03.01_results
-  sections:
-  - file: 03.02_results_thruster_allocation
 - file: summary

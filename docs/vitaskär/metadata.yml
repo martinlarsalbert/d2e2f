@@ -1,0 +1,7 @@
+ship: vitaskar
+shipname: Vitaskär
+
+period_starts:
+  before training: start
+  after training high season: 2022-07-13
+  after training low season: 2022-08-15

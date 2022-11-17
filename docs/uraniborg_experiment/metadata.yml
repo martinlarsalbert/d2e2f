@@ -1,0 +1,9 @@
+ship: uraniborg
+shipname: Uraniborg
+
+figure: ship.png
+
+period_starts:
+  black screens: start
+  lit screens: 2021-04-01
+  training: 2021-05-11
