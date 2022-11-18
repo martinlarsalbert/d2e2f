@@ -214,3 +214,47 @@ def filter_with_trip_duration(
     downcrossings_ok = downcrossings_correct_order.loc[mask]
 
     return upcrossings_ok, downcrossings_ok
+
+
+def engine_load_to_power(
+    df: pd.DataFrame, engine_maximum_power_data: pd.DataFrame
+) -> pd.DataFrame:
+    """Only engine load is supplied in the Uraniborg data.
+
+    The engine load is defined as the ratio between
+    the current engine power and the max engine power at the current propeller speed:
+    Def: load = power/max_power(rev)
+    -->power = load*max_power(rev)
+
+    The max engine power at a certain propeller speed is supplied by the engine manufacturer in
+    "engine_maximum_power_data".
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        _description_
+    engine_maximum_power_data : pd.DataFrame
+        _description_
+
+    Returns
+    -------
+    pd.DataFrame
+        df with columns added:
+        * "ME1 Load [kW]"
+        * "ME2 Load [kW]"
+
+    """
+
+    for i in range(1, 3):
+        rev = df[f"Engine speed ME{i} (rpm)"]
+        max_power = np.interp(
+            rev,
+            engine_maximum_power_data.index,
+            engine_maximum_power_data["Engine Power [kW]"],
+        )
+        key = f"Engine load ME{i} (%)"
+        if key in df:
+            load = df[key] / 100
+            df[f"ME{i} Load [kW]"] = load * max_power
+
+    return df

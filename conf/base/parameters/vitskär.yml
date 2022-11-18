@@ -12,7 +12,7 @@ vitaskar.load_end: 2022-10-18
 vitaskar.max_time_diff: 60
 
 vitaskar.harbours:
-  Norgersund:
+  Nogersund:
     - 56.005013
     - 14.737086
   Hanö: 

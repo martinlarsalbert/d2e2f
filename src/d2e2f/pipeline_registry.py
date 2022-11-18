@@ -42,6 +42,7 @@ from .pipelines import train_test as train_test
 from .pipelines import model_statistics as model_statistics
 from .pipelines import load_datavarde
 from .pipelines import load_vitskar
+from .pipelines import cut_trips
 
 # from d2e2f.pipelines import join_files as js
 
@@ -94,6 +95,33 @@ def register_pipelines() -> Dict[str, Pipeline]:
         },
     )
 
+    steaming_statistics = pipeline(
+        trip_statistics.create_pipeline(),
+        namespace="steaming",
+        inputs={"data_with_trip_columns": "data_steaming"},
+    )
+    uraniborg_experiment = pipeline(
+        data_preprocessing.create_pipeline()
+        + trips_uraniborg.create_pipeline()
+        + cut_trips.create_pipeline()
+        + steaming_statistics
+        + trip_statistics.create_pipeline(),
+        namespace="uraniborg_experiment",
+        # Changing the minimum distance and time for Uraniborg:ked
+        parameters={
+            "params:min_distance": "params:uraniborg.min_distance",
+            "params:max_distance": "params:uraniborg.max_distance",
+            "params:min_time": "params:uraniborg.min_time",
+            "params:max_time": "params:uraniborg.max_time",
+            "params:P_max": "params:uraniborg.P_max",
+            "params:harbours": "params:uraniborg.harbours",
+            "params:min_start_speed": "params:uraniborg.min_start_speed",
+            "params:max_time_diff": "params:uraniborg.max_time_diff",
+            "params:min_steaming_longitude": "params:uraniborg.min_steaming_longitude",
+            "params:max_steaming_longitude": "params:uraniborg.max_steaming_longitude",
+        },
+    )
+
     load_vitaskar_pipeline = pipeline(
         load_vitskar.create_pipeline(),
         namespace="vitaskar",
@@ -138,6 +166,7 @@ def register_pipelines() -> Dict[str, Pipeline]:
         "tycho": tycho,
         "aurora": aurora,
         "uraniborg": uraniborg,
+        "uraniborg_experiment": uraniborg_experiment,
         "vitaskar": vitaskar,
         "load_ssrs": load_datavarde_pipeline,
         "load_vitaskar": load_vitaskar_pipeline,

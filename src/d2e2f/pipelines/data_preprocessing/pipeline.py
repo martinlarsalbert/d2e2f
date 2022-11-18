@@ -6,6 +6,7 @@ from .nodes import (
     preprocess,
     numbering,
     find_trips,
+    engine_load_to_power,
 )
 
 
@@ -39,8 +40,18 @@ def create_pipeline(**kwargs):
                     "params:renames",
                     "params:P_max",
                 ],
-                outputs="data_prepared",
+                outputs="data_prepared_",
                 name="preprocess_node",
+                tags=["training", "inference"],
+            ),
+            node(
+                func=engine_load_to_power,
+                inputs=[
+                    "data_prepared_",
+                    "engine_maximum_power_data",
+                ],
+                outputs="data_prepared",
+                name="engine_load_to_power_node",
                 tags=["training", "inference"],
             ),
             node(

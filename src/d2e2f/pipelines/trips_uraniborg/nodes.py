@@ -110,6 +110,20 @@ def add_trip_columns(df: pd.DataFrame, harbours: list) -> pd.DataFrame:
     if "drift_angle" in df:
         df["beta**2*sog"] = df["drift_angle"] ** 2 * df["sog"]
 
+    # Power ratio between the thrusters (1=only aft thruster)
+    if "ME1 Load [kW]" in df:
+        df["ME load [kW]"] = df["ME1 Load [kW]"] + df["ME2 Load [kW]"]
+        df["PR"] = np.divide(
+            df["ME1 Load [kW]"],
+            df["ME load [kW]"],
+            out=0.5 * np.ones_like(df["ME load [kW]"]),  # Note PR=0.5 if power=0
+            where=df["ME load [kW]"] != 0,
+        )
+        mask = df["trip_direction"] == "Ven-Landskrona"
+        df.loc[mask, "PR"] = (
+            1 - df.loc[mask, "PR"]
+        )  # Switch when going the other direction
+
     return df
 
 
@@ -127,7 +141,6 @@ def redefine_heading(df: pd.DataFrame, trip):
 
     heading = trip["heading"]
     cog = trip["cog"]
-    awa = trip["awa"]
 
     if (cog - heading).abs().mean() > 90:
         df.loc[trip.index, "heading"] = np.mod(heading + 180, 360)

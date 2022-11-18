@@ -7,3 +7,4 @@ raw_data:
   #uraniborg: data/01_raw/uraniborg10s
   uraniborg: data/01_raw/uraniborg-2021-01-14--2022-01-13
   vitaskar: data/01_raw/vitaskär
+  uraniborg_experiment: data/01_raw/uraniborg_experiment

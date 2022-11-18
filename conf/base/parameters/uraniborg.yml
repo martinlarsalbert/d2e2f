@@ -15,4 +15,8 @@ uraniborg.max_time: 3000 # Maximum trip time
 uraniborg.min_start_speed: 0.1
 uraniborg.max_time_diff: 60
 
+
+uraniborg.min_steaming_longitude: 12.724368  # [deg] to only include steaming (excluding port manoeuvring)
+uraniborg.max_steaming_longitude: 12.814636  # [deg]
+
   

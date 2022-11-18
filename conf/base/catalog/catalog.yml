@@ -4,7 +4,7 @@
 # Link: https://kedro.readthedocs.io/en/stable/05_data/01_data_catalog.html
 
 ## Jinja2
-{% for name in ['tycho','aurora','uraniborg','vitaskar'] %}
+{% for name in ['tycho','aurora','uraniborg','vitaskar','uraniborg_experiment'] %}
 
 {{ name }}.raw_data:
   type: PartitionedDataSet
@@ -12,13 +12,7 @@
     type: pandas.CSVDataSet
   path: ${raw_data.{{ name }}}  # (Defined in globals.yml)
   filename_suffix: ".csv"
-    
-{{ name }}.preprocessed_data:
-  type: pandas.ParquetDataSet
-  save_args:
-    use_deprecated_int96_timestamps: True
-  filepath: data/02_intermediate/{{ name }}_preprocessed_data.parquet
-  
+     
 {{ name }}.data_with_trip_numbers:
   type: pandas.ParquetDataSet
   save_args:
@@ -97,4 +91,43 @@
     use_deprecated_int96_timestamps: True
   filepath: data/07_model_output/{{ name }}_trip_statistics_joined_thrusters_linear_regression_prediction
 
+{{ name }}.engine_maximum_power_data:
+  type: pandas.CSVDataSet
+  filepath:  data/01_raw/Maximum Power Data Cat C32 Acert 12V4S 746.csv
+  save_args:
+    index: True
+  load_args:
+    index_col: 0
+
+{{ name }}.data_steaming:
+  type: pandas.ParquetDataSet
+  save_args:
+    use_deprecated_int96_timestamps: True
+  filepath: data/02_intermediate/uraniborg_data_steaming.parquet
+
 {% endfor %}
+
+uraniborg_experiment.time_table:
+  type: pandas.CSVDataSet
+  filepath:  data/01_raw/time_table.csv
+  save_args:
+    index: True
+  load_args:
+    index_col: 0 
+    parse_dates: 
+      - time
+
+
+
+uraniborg_experiment.steaming.trip_statistics:
+  type: pandas.ParquetDataSet
+  save_args:
+    use_deprecated_int96_timestamps: True
+  filepath: data/02_intermediate/uraniborg.steaming.trip_statistics.parquet
+    
+# Statistics with cleaning, removing
+uraniborg_experiment.steaming.trip_statistics_clean:
+  type: pandas.ParquetDataSet
+  save_args:
+    use_deprecated_int96_timestamps: True
+  filepath: data/02_intermediate/uraniborg.steaming.trip_statistics_clean.parquet
